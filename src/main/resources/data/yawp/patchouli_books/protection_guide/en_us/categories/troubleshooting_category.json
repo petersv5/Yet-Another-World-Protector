@@ -1,0 +1,7 @@
+{
+  "name": "book.category.troubleshooting.name",
+  "description": "book.category.troubleshooting.desc",
+  "icon": "minecraft:anvil",
+  "parent": "yawp:help_category",
+  "sortnum": 1
+}

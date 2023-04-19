@@ -1,0 +1,7 @@
+{
+  "name": "book.category.faq.name",
+  "description": "book.category.faq.desc",
+  "icon": "minecraft:nether_star",
+  "parent": "yawp:help_category",
+  "sortnum": 0
+}

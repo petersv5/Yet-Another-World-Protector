@@ -1,0 +1,6 @@
+{
+  "name": "book.category.flags.name",
+  "description": "book.category.flags.desc",
+  "icon": "minecraft:name_tag",
+  "sortnum": 3
+}

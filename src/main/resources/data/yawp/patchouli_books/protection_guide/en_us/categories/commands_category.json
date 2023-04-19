@@ -1,0 +1,6 @@
+{
+  "name": "book.category.commands.name",
+  "description": "book.category.commands.desc",
+  "icon": "minecraft:command_block",
+  "sortnum": 4
+}

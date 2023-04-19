@@ -1,7 +1,7 @@
 {
   "name": "book.category.regions.local.name",
   "description": "book.category.regions.local.desc",
-  "icon": "minecraft:writable_book",
+  "icon": "minecraft:map",
   "parent": "yawp:regions_category",
   "sortnum": 2
 }

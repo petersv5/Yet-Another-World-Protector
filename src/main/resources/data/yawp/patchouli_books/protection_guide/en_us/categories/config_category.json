@@ -1,0 +1,6 @@
+{
+  "name": "book.category.config.name",
+  "description": "book.category.config.desc",
+  "icon": "minecraft:comparator",
+  "sortnum": 10
+}
