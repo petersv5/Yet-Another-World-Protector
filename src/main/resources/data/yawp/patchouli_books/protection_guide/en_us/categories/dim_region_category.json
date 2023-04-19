@@ -1,0 +1,7 @@
+{
+  "name": "book.category.regions.dim.name",
+  "description": "book.category.regions.dim.desc",
+  "icon": "minecraft:writable_book",
+  "parent": "yawp:regions_category",
+  "sortnum": 2
+}

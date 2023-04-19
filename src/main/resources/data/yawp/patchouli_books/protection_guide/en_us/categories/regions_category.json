@@ -1,0 +1,6 @@
+{
+  "name": "book.category.regions.name",
+  "description": "book.category.regions.desc",
+  "icon": "minecraft:writable_book",
+  "sortnum": 1
+}

@@ -1,0 +1,20 @@
+{
+  "name": "book.entries.intro.first_steps.name",
+  "icon": "minecraft:writable_book",
+  "category": "yawp:intro_category",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "This is a test entry, but it should show up!"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "This is a awesome!"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Page 3! =)"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "guide.name",
+  "landing_text": "guide.landing_text",
+  "book_texture": "patchouli:textures/gui/book_purple.png",
+  "model": "patchouli:book_purple",
+  "subtitle": "guide.subtitle",
+  "text_color": "111111",
+  "header_color": "555555",
+  "nameplate_color ": "555555",
+  "link_color": "001100",
+  "link_hover_color": "000011",
+  "progress_bar_color": "011100",
+  "progress_bar_background": "011000",
+  "creative_tab": "misc",
+  "i18n": true,
+  "version": "1"
+}
