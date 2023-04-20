@@ -1,0 +1,12 @@
+{
+  "name": "book.entries.regions.local.properties.name",
+  "icon": "minecraft:writable_book",
+  "category": "yawp:local_region_category",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "This is a test entry, but it should show up!"
+    }
+  ],
+  "sortnum": 0
+}

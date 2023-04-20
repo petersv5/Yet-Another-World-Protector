@@ -1,0 +1,12 @@
+{
+  "name": "book.entries.regions.dim.creation.name",
+  "icon": "minecraft:writable_book",
+  "category": "yawp:dim_region_category",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "This is a test entry, but it should show up!"
+    }
+  ],
+  "sortnum": 1
+}

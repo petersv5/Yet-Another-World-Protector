@@ -1,0 +1,7 @@
+{
+  "name": "book.category.commands.dim.name",
+  "description": "book.category.commands.dim.desc",
+  "icon": "minecraft:heart_of_the_sea",
+  "parent": "yawp:commands_category",
+  "sortnum": 4
+}
