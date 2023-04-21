@@ -1,6 +1,6 @@
 {
   "name": "book.category.intro.name",
   "description": "book.category.intro.desc",
-  "icon": "minecraft:writable_book",
+  "icon": "minecraft:written_book",
   "sortnum": 0
 }

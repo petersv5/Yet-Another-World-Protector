@@ -1,6 +1,6 @@
 {
   "name": "book.category.regions.name",
   "description": "book.category.regions.desc",
-  "icon": "minecraft:writable_book",
+  "icon": "minecraft:cartography_table",
   "sortnum": 1
 }
