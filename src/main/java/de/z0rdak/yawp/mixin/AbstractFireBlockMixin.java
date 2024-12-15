@@ -4,15 +4,13 @@ import de.z0rdak.yawp.handler.flags.FlagCheckEvent;
 import de.z0rdak.yawp.managers.data.region.DimensionRegionCache;
 import de.z0rdak.yawp.managers.data.region.RegionDataManager;
 import net.minecraft.block.AbstractFireBlock;
-import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.NetherPortal;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import com.llamalad7.mixinextras.sugar.Local;
 
 import java.util.Optional;
 
@@ -22,17 +20,15 @@ import static de.z0rdak.yawp.handler.flags.HandlerUtil.checkTargetEvent;
 @Mixin(AbstractFireBlock.class)
 public abstract class AbstractFireBlockMixin {
 
-    @Inject(method = "onBlockAdded", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/dimension/AreaHelper;getNewPortal(Lnet/minecraft/world/WorldAccess;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/Direction$Axis;)Ljava/util/Optional;"), cancellable = true)
-    private void onSpawnPortal(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify, CallbackInfo info) {
+    @ModifyVariable(method = "onBlockAdded", at = @At(value = "STORE", target = "Lnet/minecraft/world/dimension/NetherPortal;getNewPortal(Lnet/minecraft/world/WorldAccess;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/Direction$Axis;)Ljava/util/Optional;"))
+    private Optional<NetherPortal> onSpawnPortal(Optional<NetherPortal> optional, @Local(ordinal = 0) World world, @Local(ordinal = 0) BlockPos pos) {
         if (!world.isClient) {
-            Optional<NetherPortal> optional = NetherPortal.getNewPortal(world, pos, Direction.Axis.X);
             DimensionRegionCache dimCache = RegionDataManager.get().cacheFor(world.getRegistryKey());
             FlagCheckEvent flagCheckEvent = checkTargetEvent(pos, SPAWN_PORTAL, dimCache.getDimensionalRegion());
             if (flagCheckEvent.isDenied()) {
                 optional = Optional.empty();
             }
-            optional.ifPresent(NetherPortal::createPortal);
-            info.cancel();
         }
+        return optional;
     }
 }

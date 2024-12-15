@@ -20,10 +20,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.vehicle.StorageMinecartEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.consume.UseAction;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.UseAction;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -59,7 +58,7 @@ public final class PlayerFlagHandler {
         UseEntityCallback.EVENT.register(PlayerFlagHandler::onUseEntity);
     }
 
-    private static TypedActionResult<ItemStack> onUseItem(PlayerEntity player, World world, Hand hand) {
+    private static ActionResult onUseItem(PlayerEntity player, World world, Hand hand) {
         if (isServerSide(world)) {
             DimensionRegionCache dimCache = RegionDataManager.get().cacheFor(getEntityDim(player));
 
@@ -67,7 +66,7 @@ public final class PlayerFlagHandler {
                 FlagCheckEvent.PlayerFlagEvent flagCheckEvent = checkPlayerEvent(player, player.getBlockPos(), USE_ENTITIES, dimCache.getDimensionalRegion());
                 if (flagCheckEvent.isDenied()) {
                     sendFlagDeniedMsg(flagCheckEvent);
-                    return TypedActionResult.fail(player.getStackInHand(hand));
+                    return ActionResult.FAIL;
                 }
             }
 
@@ -77,10 +76,10 @@ public final class PlayerFlagHandler {
             FlagCheckEvent.PlayerFlagEvent flagCheckEvent = checkPlayerEvent(player, player.getBlockPos(), USE_ITEMS, dimCache.getDimensionalRegion());
             if (flagCheckEvent.isDenied()) {
                 sendFlagDeniedMsg(flagCheckEvent);
-                return TypedActionResult.fail(player.getStackInHand(hand));
+                return ActionResult.FAIL;
             }
         }
-        return TypedActionResult.pass(player.getStackInHand(hand));
+        return ActionResult.PASS;
     }
 
     private static ActionResult onUseBlock(PlayerEntity player, World world, Hand hand, BlockHitResult blockHitResult) {

@@ -82,7 +82,7 @@ public class MessageUtil {
     }
 
     public static void sendMessage(PlayerEntity player, MutableText textComponent) {
-        player.sendMessage(textComponent);
+        player.sendMessage(textComponent, false);
     }
 
     public static void sendDimFlagNotification(PlayerEntity player, RegionFlag flag) {

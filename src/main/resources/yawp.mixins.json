@@ -20,7 +20,7 @@
     "EntityAiBreakDoorGoalMixin",
     "EntityMixin",
     "ExperienceOrbEntityMixin",
-    "ExplosionMixin",
+    "ExplosionImplMixin",
     "FarmLandBlockMixin",
     "FireBlockMixin",
     "FrogMixin",

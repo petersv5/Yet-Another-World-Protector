@@ -11,12 +11,12 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.BatEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.World;
+import net.minecraft.server.world.ServerWorld;
 
 @Mixin(TurtleEggBlock.class)
 public abstract class TurtleEggBlockMixin {
     @Inject(method = "breaksEgg", at = @At(value = "HEAD"), cancellable = true)
-    public void onBreaksEgg(World world, Entity entity, CallbackInfoReturnable<Boolean> cir) {
+    public void onBreaksEgg(ServerWorld world, Entity entity, CallbackInfoReturnable<Boolean> cir) {
         if (entity instanceof PlayerEntity || entity instanceof BatEntity || ! (entity instanceof LivingEntity)) {
             return;
         }

@@ -21,6 +21,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.InfestedBlock;
 import net.minecraft.entity.mob.SilverfishEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
@@ -36,9 +37,13 @@ public abstract class SilverfishEntityCallForHelpGoalMixin {
 
     @Inject(method = "tick()V", at = @At(value = "HEAD"), cancellable = true)
     public void onTick(CallbackInfo ci) {
+        World raw_world = this.silverfish.getWorld();
+        if (raw_world.isClient()) {
+            return;
+        }
         --this.delay;
         if (this.delay <= 0) {
-            World world = this.silverfish.getWorld();
+            ServerWorld world = (ServerWorld) raw_world;
             Random random = this.silverfish.getRandom();
             BlockPos blockPos = this.silverfish.getBlockPos();
             DimensionRegionCache dimCache = RegionDataManager.get().cacheFor(world.getRegistryKey());

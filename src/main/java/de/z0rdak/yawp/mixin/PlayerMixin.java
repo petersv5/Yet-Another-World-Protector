@@ -12,6 +12,7 @@ import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.passive.WanderingTraderEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -116,7 +117,7 @@ public abstract class PlayerMixin {
 
 
     @Inject(method = "applyDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;applyArmorToDamage(Lnet/minecraft/entity/damage/DamageSource;F)F"), cancellable = true, allow = 1)
-    public void onHurt(DamageSource source, float amount, CallbackInfo ci) {
+    public void onHurt(ServerWorld world, DamageSource source, float amount, CallbackInfo ci) {
         PlayerEntity target = (PlayerEntity) (Object) this;
         if (isServerSide(target)) {
             DimensionRegionCache dimCache = RegionDataManager.get().cacheFor(getEntityDim(target));
@@ -135,7 +136,7 @@ public abstract class PlayerMixin {
     }
 
     @Inject(method = "applyDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;setAbsorptionAmount(F)V"), cancellable = true, allow = 1)
-    public void onReceiveDamage(DamageSource source, float amount, CallbackInfo ci) {
+    public void onReceiveDamage(ServerWorld world, DamageSource source, float amount, CallbackInfo ci) {
         PlayerEntity player = (PlayerEntity) (Object) this;
         if (isServerSide(player)) {
             // TODO: meele-player flag
@@ -203,19 +204,31 @@ public abstract class PlayerMixin {
         }
     }
 
-    @Inject(method = "tick", at = @At(value = "TAIL"), allow = 1)
-    private void onUseElytraTick(CallbackInfo ci) {
+// This version denies only starting to fly, not entering region while _in_ flight.
+//    @Inject(method = "canGlide()Z", at = @At(value = "HEAD"), allow = 1, cancellable = true)
+//    private void onUseElytraCheckGlide(CallbackInfoReturnable<Boolean> cir) {
+//        PlayerEntity player = (PlayerEntity) (Object) this;
+//        if (isServerSide(player)) {
+//            DimensionRegionCache dimCache = RegionDataManager.get().cacheFor(getEntityDim(player));
+//            FlagCheckEvent.PlayerFlagEvent flagCheckEvent = checkPlayerEvent(player, player.getBlockPos(), NO_FLIGHT, dimCache.getDimensionalRegion());
+//            if (flagCheckEvent.isDenied()) {
+//                handleAndSendMsg(flagCheckEvent);
+//                cir.setReturnValue(false);
+//            }
+//        }
+//    }
+    
+// This version denies all flight, not just entering glide.
+    @Inject(method = "updatePose()V", at = @At(value = "HEAD"), allow = 1)
+    private void onUseElytraCheckGlide(CallbackInfo ci) {
         PlayerEntity player = (PlayerEntity) (Object) this;
         if (isServerSide(player)) {
             DimensionRegionCache dimCache = RegionDataManager.get().cacheFor(getEntityDim(player));
-            if (player.isFallFlying()) {
-                FlagCheckEvent.PlayerFlagEvent flagCheckEvent = checkPlayerEvent(player, player.getBlockPos(), NO_FLIGHT, dimCache.getDimensionalRegion());
-                if (flagCheckEvent.isDenied()) {
-                    handleAndSendMsg(flagCheckEvent);
-                    player.stopFallFlying();
-                }
+            FlagCheckEvent.PlayerFlagEvent flagCheckEvent = checkPlayerEvent(player, player.getBlockPos(), NO_FLIGHT, dimCache.getDimensionalRegion());
+            if (flagCheckEvent.isDenied()) {
+                handleAndSendMsg(flagCheckEvent);
+                player.stopGliding();
             }
-
         }
     }
 }

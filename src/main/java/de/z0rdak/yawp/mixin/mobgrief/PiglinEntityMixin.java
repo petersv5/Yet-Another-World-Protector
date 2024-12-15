@@ -9,12 +9,13 @@ import de.z0rdak.yawp.util.MobGriefingHelper;
 import net.minecraft.entity.mob.PiglinEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.world.ServerWorld;
 
 @Mixin(PiglinEntity.class)
 public abstract class PiglinEntityMixin {
     Entity self = (PiglinEntity) (Object) this;
     @Inject(method = "canGather", at = @At(value = "HEAD"), cancellable = true)
-    public void onCanGather(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
+    public void onCanGather(ServerWorld world, ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
         if (MobGriefingHelper.preventGrief(self)) {
             cir.setReturnValue(false);
         }
