@@ -32,7 +32,7 @@ public class WorldEditLinkCuboidRegionSelector extends CuboidRegionSelector {
         this.region = region;
     }
     
-    protected void maybeSendToYapw() {
+    protected void maybeSendToYawp() {
     	if (src==null || region == null) {
     		return;
     	}
@@ -42,7 +42,7 @@ public class WorldEditLinkCuboidRegionSelector extends CuboidRegionSelector {
     @Override
     public void learnChanges() {
     	super.learnChanges();
-    	maybeSendToYapw();
+    	maybeSendToYawp();
     }
     
     @Override
@@ -56,14 +56,14 @@ public class WorldEditLinkCuboidRegionSelector extends CuboidRegionSelector {
     @Override
     public boolean selectPrimary(BlockVector3 position, SelectorLimits limits) {
     	boolean ret = super.selectPrimary(position, limits);
-    	maybeSendToYapw();
+    	maybeSendToYawp();
     	return ret;
     }
 
     @Override
     public boolean selectSecondary(BlockVector3 position, SelectorLimits limits) {
     	boolean ret = super.selectSecondary(position, limits);
-    	maybeSendToYapw();
+    	maybeSendToYawp();
     	return ret;
     }
 
