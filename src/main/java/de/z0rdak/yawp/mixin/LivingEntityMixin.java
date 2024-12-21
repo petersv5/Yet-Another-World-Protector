@@ -111,7 +111,7 @@ public abstract class LivingEntityMixin {
         }
     }
 
-    @Inject(method = "dropXp", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ExperienceOrbEntity;spawn(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/Vec3d;I)V"), cancellable = true, allow = 1)
+    @Inject(method = "dropExperience", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ExperienceOrbEntity;spawn(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/Vec3d;I)V"), cancellable = true, allow = 1)
     public void onXpDrop(CallbackInfo ci) {
         LivingEntity self = (LivingEntity) (Object) this;
         DimensionRegionCache dimCache = RegionDataManager.get().cacheFor(getEntityDim(self));
