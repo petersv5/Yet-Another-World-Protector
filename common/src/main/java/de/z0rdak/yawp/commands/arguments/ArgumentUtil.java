@@ -6,9 +6,10 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import de.z0rdak.yawp.api.Flag;
 import de.z0rdak.yawp.api.commands.CommandConstants;
-import de.z0rdak.yawp.commands.arguments.flag.IFlagArgumentType;
 import de.z0rdak.yawp.commands.arguments.flag.RegionFlagArgumentType;
+import de.z0rdak.yawp.commands.arguments.flag.FlagArgumentType;
 import de.z0rdak.yawp.commands.arguments.region.ContainingOwnedRegionArgumentType;
 import de.z0rdak.yawp.commands.arguments.region.RegionArgumentType;
 import de.z0rdak.yawp.constants.Constants;
@@ -16,7 +17,6 @@ import de.z0rdak.yawp.core.area.AreaType;
 import de.z0rdak.yawp.core.flag.FlagState;
 import de.z0rdak.yawp.core.flag.FlagType;
 import de.z0rdak.yawp.core.flag.IFlag;
-import de.z0rdak.yawp.core.flag.RegionFlag;
 import de.z0rdak.yawp.core.region.*;
 import de.z0rdak.yawp.data.region.DimensionRegionCache;
 import de.z0rdak.yawp.data.region.RegionDataManager;
@@ -122,17 +122,17 @@ public class ArgumentUtil {
         return StringArgumentType.getString(ctx, CommandConstants.FLAG.toString());
     }
 
-    public static RegionFlag getFlagArgument(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        return RegionFlagArgumentType.getFlag(ctx, CommandConstants.FLAG.toString());
+    public static Flag getFlagArgument(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        return FlagArgumentType.getFlag(ctx, CommandConstants.FLAG.toString());
     }
 
-    public static Set<RegionFlag> getFlagArguments(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        return RegionFlagArgumentType.getFlags(ctx, CommandConstants.FLAGS.toString());
+    public static Set<Flag> getFlagArguments(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        return FlagArgumentType.getFlags(ctx, CommandConstants.FLAGS.toString());
     }
 
     @Nullable
-    public static IFlag getIFlagArgument(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        return IFlagArgumentType.getFlag(ctx, CommandConstants.FLAG.toString());
+    public static IFlag getRegionFlagArgument(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        return RegionFlagArgumentType.getRegionFlag(ctx, CommandConstants.FLAG.toString());
     }
 
     public static String getFlagMsgArgument(CommandContext<CommandSourceStack> ctx) {

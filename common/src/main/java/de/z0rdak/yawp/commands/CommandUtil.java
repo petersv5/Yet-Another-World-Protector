@@ -6,15 +6,16 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import de.z0rdak.yawp.api.Flag;
+import de.z0rdak.yawp.api.FlagRegister;
 import de.z0rdak.yawp.api.commands.CommandConstants;
 import de.z0rdak.yawp.api.events.flag.FlagEvent;
 import de.z0rdak.yawp.api.permission.Permissions;
-import de.z0rdak.yawp.commands.arguments.flag.IFlagArgumentType;
+import de.z0rdak.yawp.commands.arguments.flag.RegionFlagArgumentType;
 import de.z0rdak.yawp.commands.arguments.region.RegionArgumentType;
 import de.z0rdak.yawp.core.flag.BooleanFlag;
 import de.z0rdak.yawp.core.flag.FlagState;
 import de.z0rdak.yawp.core.flag.IFlag;
-import de.z0rdak.yawp.core.flag.RegionFlag;
 import de.z0rdak.yawp.core.group.GroupType;
 import de.z0rdak.yawp.core.region.IMarkableRegion;
 import de.z0rdak.yawp.core.region.IProtectedRegion;
@@ -29,10 +30,7 @@ import de.z0rdak.yawp.util.text.messages.pagination.*;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
-import net.minecraft.commands.arguments.DimensionArgument;
-import net.minecraft.commands.arguments.EntityArgument;
-import net.minecraft.commands.arguments.TeamArgument;
-import net.minecraft.commands.arguments.UuidArgument;
+import net.minecraft.commands.arguments.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
@@ -102,14 +100,14 @@ public class CommandUtil {
                                 .then(Commands.argument(TEAM.toString(), TeamArgument.team())
                                         .executes(ctx -> removeTeam(ctx, getTeamArgument(ctx), regionSupplier.apply(ctx), getGroupArgument(ctx))))))
                 .then(literal(FLAG)
-                        .then(Commands.argument(FLAG.toString(), StringArgumentType.word())
-                                .suggests((ctx, builder) -> IFlagArgumentType.flag().listSuggestions(ctx, builder))
+                        .then(Commands.argument(FLAG.toString(), ResourceLocationArgument.id())
+                                .suggests((ctx, builder) -> RegionFlagArgumentType.flag().listSuggestions(ctx, builder))
                                 .executes(ctx -> removeRegionFlag(ctx, regionSupplier.apply(ctx), getFlagArgument(ctx)))
                         )
                 )
                 .then(literal(FLAGS)
                         .then(Commands.argument(FLAGS.toString(), StringArgumentType.greedyString())
-                                .suggests((ctx, builder) -> IFlagArgumentType.flag().listSuggestions(ctx, builder))
+                                .suggests((ctx, builder) -> RegionFlagArgumentType.flag().listSuggestions(ctx, builder))
                                 .executes(ctx -> removeFlags(ctx, regionSupplier.apply(ctx), getFlagArguments(ctx))))
                 );
     }
@@ -135,8 +133,8 @@ public class CommandUtil {
                                 .then(Commands.argument(TEAM.toString(), TeamArgument.team())
                                         .executes(ctx -> addTeam(ctx, getTeamArgument(ctx), regionSupplier.apply(ctx), getGroupArgument(ctx))))))
                 .then(literal(FLAG)
-                        .then(Commands.argument(FLAG.toString(), StringArgumentType.word())
-                                .suggests((ctx, builder) -> IFlagArgumentType.flag().listSuggestions(ctx, builder))
+                        .then(Commands.argument(FLAG.toString(), ResourceLocationArgument.id())
+                                .suggests((ctx, builder) -> RegionFlagArgumentType.flag().listSuggestions(ctx, builder))
                                 .executes(ctx -> addFlag(ctx, regionSupplier.apply(ctx), getFlagArgument(ctx)))
                                 .then(Commands.argument(STATE.toString(), StringArgumentType.word())
                                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(FlagState.ValidFlagStates(), builder))
@@ -148,7 +146,7 @@ public class CommandUtil {
                 )
                 .then(literal(FLAGS)
                         .then(Commands.argument(FLAGS.toString(), StringArgumentType.greedyString())
-                                .suggests((ctx, builder) -> IFlagArgumentType.flag().listSuggestions(ctx, builder))
+                                .suggests((ctx, builder) -> RegionFlagArgumentType.flag().listSuggestions(ctx, builder))
                                 .executes(ctx -> addFlags(ctx, regionSupplier.apply(ctx), getFlagArguments(ctx))))
                 )
                 .then(literal(ALL_FLAGS)
@@ -543,25 +541,25 @@ public class CommandUtil {
         return 1;
     }
 
-    public static int removeFlags(CommandContext<CommandSourceStack> ctx, IProtectedRegion region, Set<RegionFlag> flags) {
+    public static int removeFlags(CommandContext<CommandSourceStack> ctx, IProtectedRegion region, Set<Flag> flags) {
         flags.forEach(flag -> CommandUtil.removeRegionFlag(ctx, region, flag));
         return 0;
     }
 
-    public static int removeRegionFlag(CommandContext<CommandSourceStack> ctx, IProtectedRegion region, RegionFlag flag) {
+    public static int removeRegionFlag(CommandContext<CommandSourceStack> ctx, IProtectedRegion region, Flag flag) {
         if (region.containsFlag(flag)) {
-            IFlag iFlag = region.getFlag(flag.name);
+            IFlag iFlag = region.getFlag(flag.name());
             FlagEvent.RemoveFlagEvent removeFlagEvent = new FlagEvent.RemoveFlagEvent(ctx.getSource(), region, iFlag);
             Services.EVENT.post(removeFlagEvent);
-            region.removeFlag(flag.name);
+            region.removeFlag(flag.name());
             RegionDataManager.save();
-            MutableComponent msg = Component.translatableWithFallback("cli.msg.flag.removed", "Removed flag '%s' from %s", flag.name,
+            MutableComponent msg = Component.translatableWithFallback("cli.msg.flag.removed", "Removed flag '%s' from %s", flag.name(),
                     ChatLinkBuilder.buildRegionInfoLink(region));
             MutableComponent undoLink = ChatLinkBuilder.buildRegionActionUndoLink(ctx.getInput(), REMOVE, ADD);
             sendCmdFeedback(ctx.getSource(), Messages.substitutable("%s %s", msg, undoLink));
             return 0;
         } else {
-            MutableComponent msg = Component.translatableWithFallback("cli.msg.flag.not-present", "Flag '%s' is not present in %s", flag.name,
+            MutableComponent msg = Component.translatableWithFallback("cli.msg.flag.not-present", "Flag '%s' is not present in %s", flag.name(),
                     ChatLinkBuilder.buildRegionInfoLink(region));
             sendCmdFeedback(ctx.getSource(), msg);
             return 1;
@@ -674,37 +672,37 @@ public class CommandUtil {
     }
 
     public static int addAllFlags(CommandContext<CommandSourceStack> ctx, IProtectedRegion region) {
-        return addFlags(ctx, region, RegionFlag.getFlags());
+        return addFlags(ctx, region, FlagRegister.getFlags());
     }
 
-    public static int addFlag(CommandContext<CommandSourceStack> ctx, IProtectedRegion region, RegionFlag flag) {
+    public static int addFlag(CommandContext<CommandSourceStack> ctx, IProtectedRegion region, Flag flag) {
         return addFlag(ctx, region, flag, FlagState.DENIED, false);
     }
 
-    public static int addFlag(CommandContext<CommandSourceStack> ctx, IProtectedRegion region, RegionFlag flag, FlagState state, boolean override) {
+    public static int addFlag(CommandContext<CommandSourceStack> ctx, IProtectedRegion region, Flag flag, FlagState state, boolean override) {
         return addRegionFlag(ctx, region, flag, state, override);
     }
 
-    public static int addFlags(CommandContext<CommandSourceStack> ctx, IProtectedRegion region, Set<RegionFlag> flags) {
+    public static int addFlags(CommandContext<CommandSourceStack> ctx, IProtectedRegion region, Set<Flag> flags) {
         flags.forEach(flag -> CommandUtil.addRegionFlag(ctx, region, flag));
         return 0;
     }
 
-    public static int addRegionFlag(CommandContext<CommandSourceStack> ctx, IProtectedRegion region, RegionFlag flag, FlagState state, boolean override) {
-        if (region.getRegionType() == RegionType.LOCAL && flag == RegionFlag.ENTER_DIM) {
+    public static int addRegionFlag(CommandContext<CommandSourceStack> ctx, IProtectedRegion region, Flag flag, FlagState state, boolean override) {
+        if (region.getRegionType() == RegionType.LOCAL && FlagRegister.isSame(flag, FlagRegister.ENTER_DIM)) {
             MutableComponent msg = Component.literal("Flag 'enter-dim' is currently not supported for local regions.");
             sendCmdFeedback(ctx.getSource(), msg);
             return 1;
         }
         if (!region.containsFlag(flag)) {
             IFlag iFlag;
-            switch (flag.type) {
+            switch (flag.flagInfo().type()) {
                 case BOOLEAN_FLAG:
                     iFlag = new BooleanFlag(flag, state, override);
                     break;
                 case LIST_FLAG:
                 case INT_FLAG:
-                    throw new NotImplementedException("Not yet implemented = " + flag.name);
+                    throw new NotImplementedException("Not yet implemented = " + flag.name());
                 default:
                     throw new IllegalArgumentException("Unexpected value = " + flag.getClass().getName());
             }
@@ -720,14 +718,14 @@ public class CommandUtil {
             sendCmdFeedback(ctx.getSource(), Messages.substitutable("%s %s", msg, undoLink));
             return 0;
         } else {
-            MutableComponent msg = Component.translatableWithFallback("cli.msg.flag.present", "Flag '%s' is already present in %s", flag.name,
+            MutableComponent msg = Component.translatableWithFallback("cli.msg.flag.present", "Flag '%s' is already present in %s", flag.name(),
                     ChatLinkBuilder.buildRegionInfoLink(region));
             sendCmdFeedback(ctx.getSource(), msg);
             return 1;
         }
     }
 
-    public static int addRegionFlag(CommandContext<CommandSourceStack> ctx, IProtectedRegion region, RegionFlag flag) {
+    public static int addRegionFlag(CommandContext<CommandSourceStack> ctx, IProtectedRegion region, Flag flag) {
         return addRegionFlag(ctx, region, flag, FlagState.DENIED, false);
     }
 }

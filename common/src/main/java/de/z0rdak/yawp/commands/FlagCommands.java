@@ -8,7 +8,7 @@ import com.mojang.brigadier.context.CommandContext;
 import de.z0rdak.yawp.api.commands.CommandConstants;
 import de.z0rdak.yawp.api.events.flag.FlagEvent;
 import de.z0rdak.yawp.commands.arguments.ArgumentUtil;
-import de.z0rdak.yawp.commands.arguments.flag.IFlagArgumentType;
+import de.z0rdak.yawp.commands.arguments.flag.RegionFlagArgumentType;
 import de.z0rdak.yawp.commands.arguments.region.RegionArgumentType;
 import de.z0rdak.yawp.core.flag.FlagMessage;
 import de.z0rdak.yawp.core.flag.FlagState;
@@ -22,6 +22,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.DimensionArgument;
+import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -66,37 +67,37 @@ final class FlagCommands {
                 );
     }
 
-    private static RequiredArgumentBuilder<CommandSourceStack, String> flagSubCmd(Function<CommandContext<CommandSourceStack>, IProtectedRegion> regionSupplier) {
-        return Commands.argument(FLAG.toString(), StringArgumentType.word())
-                .suggests((ctx, builder) -> IFlagArgumentType.flag().listSuggestions(ctx, builder))
-                .executes(ctx -> promptFlagInfo(ctx, regionSupplier.apply(ctx), getIFlagArgument(ctx)))
+    private static RequiredArgumentBuilder<CommandSourceStack, ResourceLocation> flagSubCmd(Function<CommandContext<CommandSourceStack>, IProtectedRegion> regionSupplier) {
+        return Commands.argument(FLAG.toString(), ResourceLocationArgument.id())
+                .suggests((ctx, builder) -> RegionFlagArgumentType.flag().listSuggestions(ctx, builder))
+                .executes(ctx -> promptFlagInfo(ctx, regionSupplier.apply(ctx), getRegionFlagArgument(ctx)))
                 .then(literal(INFO)
-                        .executes(ctx -> promptFlagInfo(ctx, regionSupplier.apply(ctx), getIFlagArgument(ctx)))
+                        .executes(ctx -> promptFlagInfo(ctx, regionSupplier.apply(ctx), getRegionFlagArgument(ctx)))
                 )
                 .then(literal(STATE)
-                        .executes(ctx -> setFlagState(ctx, regionSupplier.apply(ctx), getIFlagArgument(ctx)))
+                        .executes(ctx -> setFlagState(ctx, regionSupplier.apply(ctx), getRegionFlagArgument(ctx)))
                         .then(Commands.argument(STATE.toString(), StringArgumentType.word())
                                 .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(FlagState.ValidFlagStates(), builder))
-                                .executes(ctx -> setFlagState(ctx, regionSupplier.apply(ctx), getIFlagArgument(ctx), getFlagStateArgument(ctx))))
+                                .executes(ctx -> setFlagState(ctx, regionSupplier.apply(ctx), getRegionFlagArgument(ctx), getFlagStateArgument(ctx))))
                 )
                 .then(literal(OVERRIDE)
-                        .executes(ctx -> setOverride(ctx, regionSupplier.apply(ctx), getIFlagArgument(ctx)))
+                        .executes(ctx -> setOverride(ctx, regionSupplier.apply(ctx), getRegionFlagArgument(ctx)))
                         .then(Commands.argument(OVERRIDE.toString(), BoolArgumentType.bool())
-                                .executes(ctx -> setOverride(ctx, regionSupplier.apply(ctx), getIFlagArgument(ctx), getOverrideArgument(ctx))))
+                                .executes(ctx -> setOverride(ctx, regionSupplier.apply(ctx), getRegionFlagArgument(ctx), getOverrideArgument(ctx))))
                 )
                 .then(literal(MSG)
                         .then(literal(MUTE)
-                                .executes(ctx -> setFlagMuteState(ctx, regionSupplier.apply(ctx), getIFlagArgument(ctx)))
+                                .executes(ctx -> setFlagMuteState(ctx, regionSupplier.apply(ctx), getRegionFlagArgument(ctx)))
                                 .then(Commands.argument(MUTE.toString(), BoolArgumentType.bool())
-                                        .executes(ctx -> setFlagMuteState(ctx, regionSupplier.apply(ctx), getIFlagArgument(ctx), muteArgument(ctx))))
+                                        .executes(ctx -> setFlagMuteState(ctx, regionSupplier.apply(ctx), getRegionFlagArgument(ctx), muteArgument(ctx))))
                         )
                         .then(literal(SET)
                                 .then(Commands.argument(MSG.toString(), StringArgumentType.string())
                                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(flagMsgExamples(), builder))
-                                        .executes(ctx -> setRegionFlagMsg(ctx, regionSupplier.apply(ctx), getIFlagArgument(ctx), getFlagMsgArgument(ctx))))
+                                        .executes(ctx -> setRegionFlagMsg(ctx, regionSupplier.apply(ctx), getRegionFlagArgument(ctx), getFlagMsgArgument(ctx))))
                         )
                         .then(literal(CLEAR)
-                                .executes(ctx -> setRegionFlagMsg(ctx, regionSupplier.apply(ctx), getIFlagArgument(ctx), FlagMessage.CONFIG_MSG))
+                                .executes(ctx -> setRegionFlagMsg(ctx, regionSupplier.apply(ctx), getRegionFlagArgument(ctx), FlagMessage.CONFIG_MSG))
                         )
                 );
     }
