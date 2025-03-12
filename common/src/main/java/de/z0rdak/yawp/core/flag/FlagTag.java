@@ -3,22 +3,23 @@ package de.z0rdak.yawp.core.flag;
 import java.util.Arrays;
 import java.util.List;
 
-public enum FlagCategory {
+public enum FlagTag {
     PLAYER("player"),
     BLOCK("block"),
     ENTITY("entity"),
     ITEM("item"),
     ENVIRONMENT("environment"),
+    HIGH_FREQUENCY("high_frequency"),
     PROTECTION("protection");
 
     public final String name;
 
-    FlagCategory(String name) {
+    FlagTag(String name) {
         this.name = name;
     }
 
-    public static FlagCategory from(String category) throws IllegalArgumentException {
-        List<FlagCategory> categories = Arrays.stream(values())
+    public static FlagTag from(String category) throws IllegalArgumentException {
+        List<FlagTag> categories = Arrays.stream(values())
                 .filter(flag -> flag.name.equalsIgnoreCase(category))
                 .toList();
         if (categories.isEmpty()) {
