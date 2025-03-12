@@ -1,8 +1,9 @@
 package de.z0rdak.yawp.mixin;
 
 import de.z0rdak.yawp.api.FlagEvaluator;
+import de.z0rdak.yawp.api.FlagRegister;
 import de.z0rdak.yawp.api.events.region.FlagCheckEvent;
-import de.z0rdak.yawp.core.flag.RegionFlag;
+import de.z0rdak.yawp.api.Flag;
 import de.z0rdak.yawp.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -24,7 +25,7 @@ public class BiomeMixin {
             return;
         }
         ServerLevel level = worldGenLevel.getLevel();
-        FlagCheckEvent checkEvent = new FlagCheckEvent(blockPos, RegionFlag.SNOW_FALL, level.dimension());
+        FlagCheckEvent checkEvent = new FlagCheckEvent(blockPos, FlagRegister.SNOW_FALL, level.dimension());
         if (Services.EVENT.post(checkEvent)){
             return;
         }

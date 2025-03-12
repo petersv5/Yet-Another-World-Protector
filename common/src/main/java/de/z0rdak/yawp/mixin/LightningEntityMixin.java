@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import static de.z0rdak.yawp.core.flag.RegionFlag.LIGHTNING_PROT;
+import static de.z0rdak.yawp.api.FlagRegister.LIGHTNING_PROT;
 import static de.z0rdak.yawp.handler.HandlerUtil.*;
 
 @Mixin(LightningBolt.class)

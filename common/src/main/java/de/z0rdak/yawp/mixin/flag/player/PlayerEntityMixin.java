@@ -1,9 +1,10 @@
 package de.z0rdak.yawp.mixin.flag.player;
 
 import de.z0rdak.yawp.api.FlagEvaluator;
+import de.z0rdak.yawp.api.FlagRegister;
 import de.z0rdak.yawp.api.events.region.FlagCheckEvent;
 import de.z0rdak.yawp.core.flag.FlagState;
-import de.z0rdak.yawp.core.flag.RegionFlag;
+import de.z0rdak.yawp.api.Flag;
 import de.z0rdak.yawp.platform.Services;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
@@ -22,7 +23,7 @@ public abstract class PlayerEntityMixin {
     void injectElytraCheck(CallbackInfoReturnable<Boolean> cir) {
         Player self = (Player) (Object) this;
         if (isServerSide(self.level())) {
-            FlagCheckEvent checkEvent = new FlagCheckEvent(self.blockPosition(), RegionFlag.USE_ELYTRA, getDimKey(self));
+            FlagCheckEvent checkEvent = new FlagCheckEvent(self.blockPosition(), FlagRegister.USE_ELYTRA, getDimKey(self));
             if (Services.EVENT.post(checkEvent)) {
                 return;
             }
@@ -34,7 +35,7 @@ public abstract class PlayerEntityMixin {
     void onDropEquipment(ServerLevel level, CallbackInfo ci) {
         Player self = (Player) (Object) this;
         if (isServerSide(self.level())) {
-            FlagCheckEvent checkEvent = new FlagCheckEvent(self.blockPosition(), RegionFlag.KEEP_INV, getDimKey(self));
+            FlagCheckEvent checkEvent = new FlagCheckEvent(self.blockPosition(), FlagRegister.KEEP_INV, getDimKey(self));
             if (Services.EVENT.post(checkEvent)) {
                 return;
             }
@@ -46,7 +47,7 @@ public abstract class PlayerEntityMixin {
     public void onGainHunger(float exhaustion, CallbackInfo ci) {
         Player self = (Player) (Object) this;
         if (isServerSide(self)) {
-            FlagCheckEvent checkEvent = new FlagCheckEvent(self.blockPosition(), RegionFlag.NO_HUNGER, getDimKey(self), self);
+            FlagCheckEvent checkEvent = new FlagCheckEvent(self.blockPosition(), FlagRegister.NO_HUNGER, getDimKey(self), self);
             if (Services.EVENT.post(checkEvent))
                 return;
             FlagState flagState = FlagEvaluator.processCheck(checkEvent,

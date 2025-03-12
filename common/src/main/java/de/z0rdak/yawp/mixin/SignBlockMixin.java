@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static de.z0rdak.yawp.core.flag.RegionFlag.NO_SIGN_EDIT;
+import static de.z0rdak.yawp.api.FlagRegister.NO_SIGN_EDIT;
 import static de.z0rdak.yawp.api.FlagEvaluator.processCheck;
 import static de.z0rdak.yawp.api.MessageSender.sendFlagMsg;
 
