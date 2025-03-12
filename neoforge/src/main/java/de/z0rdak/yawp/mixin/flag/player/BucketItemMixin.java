@@ -19,8 +19,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import static de.z0rdak.yawp.core.flag.RegionFlag.PLACE_FLUIDS;
-import static de.z0rdak.yawp.core.flag.RegionFlag.SCOOP_FLUIDS;
+import static de.z0rdak.yawp.api.FlagRegister.PLACE_FLUIDS;
+import static de.z0rdak.yawp.api.FlagRegister.SCOOP_FLUIDS;
 import static de.z0rdak.yawp.handler.HandlerUtil.*;
 import static de.z0rdak.yawp.api.MessageSender.sendFlagMsg;
 

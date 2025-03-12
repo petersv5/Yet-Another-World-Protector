@@ -1,5 +1,6 @@
 package de.z0rdak.yawp.core.flag;
 
+import de.z0rdak.yawp.api.Flag;
 import de.z0rdak.yawp.core.INbtSerializable;
 import net.minecraft.nbt.CompoundTag;
 
@@ -7,11 +8,11 @@ public interface IFlag extends INbtSerializable<CompoundTag>, Comparable<IFlag> 
 
     /**
      * Get the unique identifier for the flag. <br>
-     * The valid flags are currently stored as an enum. <br>
-     * Mod:Name -> ResourceLocation in the future.
+     * A flag is saved as ResourceLocation::toString in the form modId:flag-name <br>
+     * E.g.: yawp:break_blocks
      *
      * @return unique name for flag.
-     * @see RegionFlag
+     * @see Flag
      */
     String getName();
 

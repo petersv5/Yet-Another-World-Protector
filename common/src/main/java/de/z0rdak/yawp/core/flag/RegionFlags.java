@@ -1,5 +1,6 @@
 package de.z0rdak.yawp.core.flag;
 
+import de.z0rdak.yawp.api.FlagRegister;
 import de.z0rdak.yawp.constants.Constants;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +23,7 @@ public class RegionFlags implements IFlagContainer {
     public CompoundTag serializeNBT() {
         CompoundTag nbt = new CompoundTag();
         flags.forEach((flagName, iFlag) -> {
-            if (RegionFlag.contains(flagName)) {
+            if (FlagRegister.isRegistered(flagName)) {
                 nbt.put(flagName, iFlag.serializeNBT());
             }
         });
@@ -33,7 +34,7 @@ public class RegionFlags implements IFlagContainer {
     public void deserializeNBT(CompoundTag nbt) {
         flags.clear();
         for (String key : nbt.getAllKeys()) {
-            if (RegionFlag.contains(key)) {
+            if (FlagRegister.isRegistered(key)) {
                 CompoundTag flagNbt = nbt.getCompound(key);
                 FlagType flagType = FlagType.of(flagNbt.getString(FLAG_TYPE));
                 if (flagType != null) {

@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static de.z0rdak.yawp.core.flag.RegionFlag.*;
+import static de.z0rdak.yawp.api.FlagRegister.*;
 import static de.z0rdak.yawp.handler.HandlerUtil.*;
 
 @Mixin(ServerLevel.class)

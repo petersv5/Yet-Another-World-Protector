@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Set;
 
-import static de.z0rdak.yawp.core.flag.RegionFlag.*;
+import static de.z0rdak.yawp.api.FlagRegister.*;
 import static de.z0rdak.yawp.handler.HandlerUtil.*;
 import static de.z0rdak.yawp.api.MessageSender.sendFlagMsg;
 

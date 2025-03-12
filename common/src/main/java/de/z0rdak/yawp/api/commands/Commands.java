@@ -1,9 +1,9 @@
 package de.z0rdak.yawp.api.commands;
 
+import de.z0rdak.yawp.api.Flag;
 import de.z0rdak.yawp.constants.Constants;
 import de.z0rdak.yawp.core.flag.FlagState;
 import de.z0rdak.yawp.core.flag.IFlag;
-import de.z0rdak.yawp.core.flag.RegionFlag;
 import de.z0rdak.yawp.core.group.GroupType;
 import de.z0rdak.yawp.core.region.IProtectedRegion;
 import net.minecraft.resources.ResourceKey;
@@ -54,8 +54,8 @@ public final class Commands {
         }
     }
 
-    public static String buildFlagBaseCmd(IProtectedRegion region, RegionFlag flag) {
-        return buildFlagBaseCmd(region, flag.name);
+    public static String buildFlagBaseCmd(IProtectedRegion region, Flag flag) {
+        return buildFlagBaseCmd(region, flag.name());
     }
 
     public static String buildFlagBaseCmd(IProtectedRegion region, IFlag flag) {

@@ -1,12 +1,12 @@
 package de.z0rdak.yawp.config.server;
 
+import de.z0rdak.yawp.api.FlagRegister;
 import de.z0rdak.yawp.api.events.region.FlagCheckEvent;
 import de.z0rdak.yawp.api.events.region.FlagCheckResult;
 import de.z0rdak.yawp.constants.Constants;
-import de.z0rdak.yawp.core.flag.FlagCategory;
+import de.z0rdak.yawp.core.flag.FlagTag;
 import de.z0rdak.yawp.core.flag.FlagState;
 import de.z0rdak.yawp.core.flag.IFlag;
-import de.z0rdak.yawp.core.flag.RegionFlag;
 import de.z0rdak.yawp.core.region.RegionType;
 import de.z0rdak.yawp.util.AreaUtil;
 import net.neoforged.neoforge.common.ModConfigSpec;
@@ -50,10 +50,10 @@ public class LoggingConfig {
                 .defineListAllowEmpty(List.of("log_result_values"), () -> Collections.singletonList(FlagState.DENIED.name), LoggingConfig::isValidFlagState);
 
         LOG_FLAG_CATEGORIES = BUILDER.comment("List of flag categories which shall be logged.\nValid categories are: player, block, entity, item, environment, protection and * (for all).")
-                .defineListAllowEmpty(List.of("log_flag_categories"), () -> Collections.singletonList(FlagCategory.PLAYER.name), LoggingConfig::isValidCategory);
+                .defineListAllowEmpty(List.of("log_flag_categories"), () -> Collections.singletonList(FlagTag.PLAYER.name), LoggingConfig::isValidCategory);
 
         LOG_FLAGS = BUILDER.comment("List of flags which shall be logged.")
-                .defineListAllowEmpty(List.of("log_flags"), () -> Arrays.asList(RegionFlag.BREAK_BLOCKS.name, RegionFlag.PLACE_BLOCKS.name), LoggingConfig::isValidFlag);
+                .defineListAllowEmpty(List.of("log_flags"), () -> Arrays.asList(FlagRegister.BREAK_BLOCKS.name(), FlagRegister.PLACE_BLOCKS.name()), LoggingConfig::isValidFlag);
 
         // DETAILED_PLAYER_FLAG_LOG = BUILDER.comment("Enable logging of detailed flag checks for player related flags.").define("log_detailed_player_flags", false);
 
@@ -86,7 +86,7 @@ public class LoggingConfig {
     private static boolean isValidCategory(Object entity) {
         if (entity instanceof String str) {
             try {
-                FlagCategory category = FlagCategory.from(str);
+                FlagTag category = FlagTag.from(str);
                 return category != null || str.equalsIgnoreCase("*");
             } catch (IllegalArgumentException e) {
                 LOGGING_CONFIG_LOGGER.warn("Invalid flag category supplied for 'log_flag_categories': {}", entity);
@@ -98,7 +98,7 @@ public class LoggingConfig {
 
     public static boolean isValidFlag(Object flag) {
         if (flag instanceof String) {
-            boolean contains = RegionFlag.contains((String) flag);
+            boolean contains = FlagRegister.isRegistered((String) flag);
             if (!contains) {
                 LOGGING_CONFIG_LOGGER.warn("Invalid flag supplied for 'log_flags': {}", flag);
             }
@@ -142,7 +142,7 @@ public class LoggingConfig {
         boolean matchesFlagOrCategory = (flagMatchesCategory(check) || matchesFlag(check));
         if (matchesFlagOrCategory) {
             LOGGING_CONFIG_LOGGER.info("[Check] {}, at {}, in '{}', Player={}, Id={}",
-                    check.getRegionFlag().name,
+                    check.getFlag().name(),
                     AreaUtil.blockPosStr(check.getTarget()),
                     check.getDimension().location().toString(),
                     check.getPlayer() == null ? "n/a" : check.getPlayer().getDisplayName().getString(),
@@ -187,10 +187,10 @@ public class LoggingConfig {
     }
 
     public static boolean flagMatchesCategory(FlagCheckEvent check) {
-        return RegionFlag.matchesCategory(check.getRegionFlag(), getFlagCategories());
+        return FlagRegister.matchesCategory(check.getFlag(), getFlagCategories());
     }
 
     public static boolean matchesFlag(FlagCheckEvent check) {
-        return LoggingConfig.getFlagsToLog().contains(check.getRegionFlag().name);
+        return LoggingConfig.getFlagsToLog().contains(check.getFlag().name());
     }
 }

@@ -1,6 +1,6 @@
 package de.z0rdak.yawp.api.events.region;
 
-import de.z0rdak.yawp.core.flag.RegionFlag;
+import de.z0rdak.yawp.api.Flag;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.player.Player;
@@ -35,7 +35,7 @@ public class ForgeFlagCheckEvent extends Event {
     /**
      * The flag that is checked.
      */
-    private final RegionFlag regionFlag;
+    private final Flag regionFlag;
 
     /**
      * Internal Identifier to relate a flag check to its result.
@@ -43,7 +43,7 @@ public class ForgeFlagCheckEvent extends Event {
     private final String id;
 
 
-    public ForgeFlagCheckEvent(BlockPos target, RegionFlag regionFlag, ResourceKey<Level> dimension, @Nullable Player player) {
+    public ForgeFlagCheckEvent(BlockPos target, Flag regionFlag, ResourceKey<Level> dimension, @Nullable Player player) {
         this.player = player;
         this.target = target;
         this.dimension = dimension;
@@ -51,7 +51,7 @@ public class ForgeFlagCheckEvent extends Event {
         this.id = UUID.randomUUID().toString();
     }
 
-    public ForgeFlagCheckEvent(BlockPos target, RegionFlag regionFlag, ResourceKey<Level> dimension, @Nullable Player player, String id) {
+    public ForgeFlagCheckEvent(BlockPos target, Flag regionFlag, ResourceKey<Level> dimension, @Nullable Player player, String id) {
         this.player = player;
         this.target = target;
         this.dimension = dimension;
@@ -63,11 +63,11 @@ public class ForgeFlagCheckEvent extends Event {
         this.player = event.getPlayer();
         this.target = event.getTarget();
         this.dimension = event.getDimension();
-        this.regionFlag = event.getRegionFlag();
+        this.regionFlag = event.getFlag();
         this.id = event.getId();
     }
 
-    public ForgeFlagCheckEvent(BlockPos target, RegionFlag regionFlag, ResourceKey<Level> dimension) {
+    public ForgeFlagCheckEvent(BlockPos target, Flag regionFlag, ResourceKey<Level> dimension) {
         this(target, regionFlag, dimension, null);
     }
 
@@ -83,7 +83,7 @@ public class ForgeFlagCheckEvent extends Event {
         return this.target;
     }
 
-    public RegionFlag getRegionFlag() {
+    public Flag getRegionFlag() {
         return regionFlag;
     }
 

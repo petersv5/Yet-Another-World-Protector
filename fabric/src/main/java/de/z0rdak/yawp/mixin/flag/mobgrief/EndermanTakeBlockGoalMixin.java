@@ -10,8 +10,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static de.z0rdak.yawp.core.flag.RegionFlag.ENDERMAN_GRIEFING;
-import static de.z0rdak.yawp.core.flag.RegionFlag.MOB_GRIEFING;
+import static de.z0rdak.yawp.api.FlagRegister.ENDERMAN_GRIEFING;
+import static de.z0rdak.yawp.api.FlagRegister.MOB_GRIEFING;
 import static de.z0rdak.yawp.handler.HandlerUtil.getDimKey;
 import static de.z0rdak.yawp.api.FlagEvaluator.processCheck;
 

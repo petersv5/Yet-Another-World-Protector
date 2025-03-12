@@ -1,10 +1,11 @@
 package de.z0rdak.yawp.handler.flags;
 
 import de.z0rdak.yawp.api.FlagEvaluator;
+import de.z0rdak.yawp.api.FlagRegister;
 import de.z0rdak.yawp.api.events.region.FlagCheckEvent;
 import de.z0rdak.yawp.constants.Constants;
 import de.z0rdak.yawp.core.flag.FlagState;
-import de.z0rdak.yawp.core.flag.RegionFlag;
+import de.z0rdak.yawp.api.Flag;
 import de.z0rdak.yawp.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
@@ -47,7 +48,7 @@ public class GrievingFlagHandler {
             Entity trampler = event.getEntity();
             ResourceKey<Level> dim = getDimKey(trampler);
             Player player = trampler instanceof Player ? (Player) trampler : null;
-            FlagCheckEvent checkEvent = new FlagCheckEvent(event.getPos(), RegionFlag.TRAMPLE_FARMLAND, dim, player);
+            FlagCheckEvent checkEvent = new FlagCheckEvent(event.getPos(), FlagRegister.TRAMPLE_FARMLAND, dim, player);
             if (Services.EVENT.post(checkEvent)) {
                 return;
             }
@@ -59,7 +60,7 @@ public class GrievingFlagHandler {
                 return;
             // cancel only player trampling
             if (trampler instanceof Player) {
-                checkEvent = new FlagCheckEvent(event.getPos(), RegionFlag.TRAMPLE_FARMLAND_PLAYER, dim, player);
+                checkEvent = new FlagCheckEvent(event.getPos(), FlagRegister.TRAMPLE_FARMLAND_PLAYER, dim, player);
                 if (Services.EVENT.post(checkEvent)) {
                     return;
                 }
@@ -68,7 +69,7 @@ public class GrievingFlagHandler {
                     sendFlagMsg(denyResult);
                 });
             } else {
-                checkEvent = new FlagCheckEvent(event.getPos(), RegionFlag.TRAMPLE_FARMLAND_OTHER, dim);
+                checkEvent = new FlagCheckEvent(event.getPos(), FlagRegister.TRAMPLE_FARMLAND_OTHER, dim);
                 if (Services.EVENT.post(checkEvent)) {
                     return;
                 }
@@ -87,19 +88,19 @@ public class GrievingFlagHandler {
             BlockPos target = event.getPos();
             FlagCheckEvent checkEvent = null;
             if (destroyer instanceof EnderDragon) {
-                checkEvent = new FlagCheckEvent(target, RegionFlag.DRAGON_BLOCK_PROT, getDimKey(destroyer));
+                checkEvent = new FlagCheckEvent(target, FlagRegister.DRAGON_BLOCK_PROT, getDimKey(destroyer));
                 if (Services.EVENT.post(checkEvent)) {
                     return;
                 }
             }
             if (destroyer instanceof WitherBoss) {
-                checkEvent = new FlagCheckEvent(target, RegionFlag.WITHER_BLOCK_PROT, getDimKey(destroyer));
+                checkEvent = new FlagCheckEvent(target, FlagRegister.WITHER_BLOCK_PROT, getDimKey(destroyer));
                 if (Services.EVENT.post(checkEvent)) {
                     return;
                 }
             }
             if (destroyer instanceof Zombie) {
-                checkEvent = new FlagCheckEvent(target, RegionFlag.ZOMBIE_DOOR_PROT, getDimKey(destroyer));
+                checkEvent = new FlagCheckEvent(target, FlagRegister.ZOMBIE_DOOR_PROT, getDimKey(destroyer));
                 if (Services.EVENT.post(checkEvent)) {
                     return;
                 }
@@ -120,7 +121,7 @@ public class GrievingFlagHandler {
         if (ForgeHandlerUtil.isServerSide(event)) {
             LivingEntity lootEntity = event.getEntity();
             Player player = isPlayer(lootEntity) ? (Player) lootEntity : null;
-            FlagCheckEvent checkEvent = new FlagCheckEvent(lootEntity.blockPosition(), RegionFlag.DROP_LOOT_ALL, event.getEntity().level().dimension(), player);
+            FlagCheckEvent checkEvent = new FlagCheckEvent(lootEntity.blockPosition(), FlagRegister.DROP_LOOT_ALL, event.getEntity().level().dimension(), player);
             if (Services.EVENT.post(checkEvent)) {
                 return;
             }
@@ -131,7 +132,7 @@ public class GrievingFlagHandler {
             if (flagState == FlagState.DENIED)
                 return;
             if (player != null) {
-                checkEvent = new FlagCheckEvent(lootEntity.blockPosition(), RegionFlag.DROP_LOOT_PLAYER, player.level().dimension(), player);
+                checkEvent = new FlagCheckEvent(lootEntity.blockPosition(), FlagRegister.DROP_LOOT_PLAYER, player.level().dimension(), player);
                 if (Services.EVENT.post(checkEvent)) {
                     return;
                 }
@@ -152,7 +153,7 @@ public class GrievingFlagHandler {
             BlockPos pos = xpDroppingEntity.blockPosition();
             if (player != null) {
                 // prevent all xp drop
-                FlagCheckEvent checkEvent = new FlagCheckEvent(pos, RegionFlag.XP_DROP_ALL, dim);
+                FlagCheckEvent checkEvent = new FlagCheckEvent(pos, FlagRegister.XP_DROP_ALL, dim);
                 if (Services.EVENT.post(checkEvent)) {
                     return;
                 }
@@ -163,7 +164,7 @@ public class GrievingFlagHandler {
                     return;
 
                 // prevent non-member/owner players from dropping xp by killing mobs
-                checkEvent = new FlagCheckEvent(pos, RegionFlag.XP_DROP_PLAYER, dim, player);
+                checkEvent = new FlagCheckEvent(pos, FlagRegister.XP_DROP_PLAYER, dim, player);
                 if (Services.EVENT.post(checkEvent)) {
                     return;
                 }
@@ -176,7 +177,7 @@ public class GrievingFlagHandler {
 
                 // prevent monster xp drop
                 if (isMonster(xpDroppingEntity)) {
-                    checkEvent = new FlagCheckEvent(pos, RegionFlag.XP_DROP_MONSTER, dim);
+                    checkEvent = new FlagCheckEvent(pos, FlagRegister.XP_DROP_MONSTER, dim);
                     if (Services.EVENT.post(checkEvent)) {
                         return;
                     }
@@ -187,7 +188,7 @@ public class GrievingFlagHandler {
                     if (flagState == FlagState.DENIED) {
                     }
                 } else {
-                    checkEvent = new FlagCheckEvent(pos, RegionFlag.XP_DROP_OTHER, dim);
+                    checkEvent = new FlagCheckEvent(pos, FlagRegister.XP_DROP_OTHER, dim);
                     if (Services.EVENT.post(checkEvent)) {
                         return;
                     }
@@ -199,7 +200,7 @@ public class GrievingFlagHandler {
             }
 
             if (xpDroppingEntity instanceof Player) {
-                FlagCheckEvent checkEvent = new FlagCheckEvent(xpDroppingEntity.blockPosition(), RegionFlag.KEEP_XP, getDimKey(xpDroppingEntity));
+                FlagCheckEvent checkEvent = new FlagCheckEvent(xpDroppingEntity.blockPosition(), FlagRegister.KEEP_XP, getDimKey(xpDroppingEntity));
                 if (Services.EVENT.post(checkEvent))
                     return;
                 FlagEvaluator.processCheck(checkEvent, deny -> {
@@ -215,7 +216,7 @@ public class GrievingFlagHandler {
             return;
         }
         if (isServerSide(event.getEntity())) {
-            FlagCheckEvent checkEvent = new FlagCheckEvent(event.getEntity().blockPosition(), RegionFlag.MOB_GRIEFING, getDimKey(event.getEntity()));
+            FlagCheckEvent checkEvent = new FlagCheckEvent(event.getEntity().blockPosition(), FlagRegister.MOB_GRIEFING, getDimKey(event.getEntity()));
             if (Services.EVENT.post(checkEvent)) {
                 return;
             }
@@ -225,7 +226,7 @@ public class GrievingFlagHandler {
             if (flagState == FlagState.DENIED)
                 return;
             if (event.getEntity() instanceof EnderMan) {
-                checkEvent = new FlagCheckEvent(event.getEntity().blockPosition(), RegionFlag.ENDERMAN_GRIEFING, getDimKey(event.getEntity()));
+                checkEvent = new FlagCheckEvent(event.getEntity().blockPosition(), FlagRegister.ENDERMAN_GRIEFING, getDimKey(event.getEntity()));
                 if (Services.EVENT.post(checkEvent)) {
                     return;
                 }
@@ -242,10 +243,10 @@ public class GrievingFlagHandler {
             ResourceKey<Level> dim = event.getLevel().dimension();
 
             Set<BlockPos> protectedBlocks = event.getAffectedBlocks().stream()
-                    .filter(explosionBlockPosFilterPredicate(dim, RegionFlag.EXPLOSION_BLOCK))
+                    .filter(explosionBlockPosFilterPredicate(dim, FlagRegister.EXPLOSION_BLOCK))
                     .collect(Collectors.toSet());
             Set<Entity> protectedEntities = event.getAffectedEntities().stream()
-                    .filter(explosionEntityPosFilterPredicate(dim, RegionFlag.EXPLOSION_ENTITY))
+                    .filter(explosionEntityPosFilterPredicate(dim, FlagRegister.EXPLOSION_ENTITY))
                     .collect(Collectors.toSet());
             preventDestructionFor(event, protectedBlocks, protectedEntities);
 
@@ -253,10 +254,10 @@ public class GrievingFlagHandler {
                 boolean explosionTriggeredByCreeper = (event.getExplosion().getIndirectSourceEntity() instanceof Creeper);
                 if (explosionTriggeredByCreeper) {
                     protectedBlocks = event.getAffectedBlocks().stream()
-                            .filter(explosionBlockPosFilterPredicate(dim, RegionFlag.EXPLOSION_CREEPER_BLOCK))
+                            .filter(explosionBlockPosFilterPredicate(dim, FlagRegister.EXPLOSION_CREEPER_BLOCK))
                             .collect(Collectors.toSet());
                     protectedEntities = event.getAffectedEntities().stream()
-                            .filter(explosionEntityPosFilterPredicate(dim, RegionFlag.EXPLOSION_CREEPER_ENTITY))
+                            .filter(explosionEntityPosFilterPredicate(dim, FlagRegister.EXPLOSION_CREEPER_ENTITY))
                             .collect(Collectors.toSet());
                 }
                 preventDestructionFor(event, protectedBlocks, protectedEntities);
@@ -276,7 +277,7 @@ public class GrievingFlagHandler {
         event.getAffectedEntities().removeAll(protectedEntities);
     }
 
-    private static Predicate<Entity> explosionEntityPosFilterPredicate(ResourceKey<Level> dim, RegionFlag flag) {
+    private static Predicate<Entity> explosionEntityPosFilterPredicate(ResourceKey<Level> dim, Flag flag) {
         return entity -> {
             // TODO: Introduce a subtype for FlagCheckEvent which holds multiple blocks? This way only one event is fired
             // TODO: Make the event cancellable and have a mutable blockpos list
@@ -290,7 +291,7 @@ public class GrievingFlagHandler {
         };
     }
 
-    private static Predicate<BlockPos> explosionBlockPosFilterPredicate(ResourceKey<Level> dim, RegionFlag flag) {
+    private static Predicate<BlockPos> explosionBlockPosFilterPredicate(ResourceKey<Level> dim, Flag flag) {
         return pos -> {
             // TODO: Introduce a subtype for FlagCheckEvent which holds multiple blocks? This way only one event is fired
             // TODO: Make the event cancellable and have a mutable blockpos list

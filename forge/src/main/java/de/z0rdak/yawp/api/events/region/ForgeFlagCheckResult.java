@@ -43,7 +43,7 @@ public class ForgeFlagCheckResult extends Event {
 
     public static ForgeFlagCheckResult asEvent(FlagCheckResult result) {
         FlagCheckEvent check = result.getFlagCheck();
-        ForgeFlagCheckEvent checkEvent = new ForgeFlagCheckEvent(check.getTarget(), check.getRegionFlag(), check.getDimension(), check.getPlayer(), check.getId());
+        ForgeFlagCheckEvent checkEvent = new ForgeFlagCheckEvent(check.getTarget(), check.getFlag(), check.getDimension(), check.getPlayer(), check.getId());
         return new ForgeFlagCheckResult(checkEvent, result.getFlagState(), result.getResponsible(), result.getFlag());
     }
 

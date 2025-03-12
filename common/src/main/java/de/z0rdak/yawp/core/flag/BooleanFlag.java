@@ -1,5 +1,6 @@
 package de.z0rdak.yawp.core.flag;
 
+import de.z0rdak.yawp.api.Flag;
 import net.minecraft.nbt.CompoundTag;
 
 /**
@@ -12,17 +13,17 @@ public class BooleanFlag extends AbstractFlag {
         this.deserializeNBT(nbt);
     }
 
-    public BooleanFlag(RegionFlag flag, FlagState state, boolean override) {
-        super(flag.name, flag.type, override, state);
+    public BooleanFlag(Flag flag, FlagState state, boolean override) {
+        super(flag.name(), flag.flagInfo().type(), override, state);
     }
 
-    public BooleanFlag(RegionFlag flag, FlagState state, FlagMessage msg, boolean override) {
+    public BooleanFlag(Flag flag, FlagState state, FlagMessage msg, boolean override) {
         this(flag, state, override);
         this.msg = msg;
     }
 
-    public BooleanFlag(RegionFlag flag) {
-        super(flag.name, flag.type, false, FlagState.DENIED);
+    public BooleanFlag(Flag flag) {
+        super(flag.name(), flag.flagInfo().type(), false, FlagState.DENIED);
     }
 
     @Override

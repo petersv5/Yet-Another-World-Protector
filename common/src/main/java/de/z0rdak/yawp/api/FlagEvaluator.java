@@ -2,8 +2,6 @@ package de.z0rdak.yawp.api;
 
 import de.z0rdak.yawp.api.events.region.FlagCheckEvent;
 import de.z0rdak.yawp.api.events.region.FlagCheckResult;
-import de.z0rdak.yawp.api.permission.Permissions;
-import de.z0rdak.yawp.constants.Constants;
 import de.z0rdak.yawp.core.flag.*;
 import de.z0rdak.yawp.core.region.IMarkableRegion;
 import de.z0rdak.yawp.core.region.IProtectedRegion;
@@ -14,7 +12,6 @@ import de.z0rdak.yawp.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,9 +23,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
-import static de.z0rdak.yawp.core.flag.RegionFlag.BREAK_BLOCKS;
-import static de.z0rdak.yawp.core.flag.RegionFlag.MOB_GRIEFING;
 
 public class FlagEvaluator {
 
@@ -111,8 +105,8 @@ public class FlagEvaluator {
         if (targetRegion == null) {
             return FlagCheckResult.Undefined(checkEvent);
         }
-        var regionFlag = checkEvent.getRegionFlag();
-        var flagContext = new FlagContext(targetRegion, regionFlag, targetRegion.getFlag(regionFlag.name), checkEvent.getPlayer());
+        var flag = checkEvent.getFlag();
+        var flagContext = new FlagContext(targetRegion, flag, targetRegion.getFlag(flag.name()), checkEvent.getPlayer());
         var resultingContext = resolveFlag(targetRegion, flagContext);
         return new FlagCheckResult(checkEvent, resultingContext.resultingState(), resultingContext.region(), resultingContext.flag());
     }
@@ -223,7 +217,7 @@ public class FlagEvaluator {
 
     public static void checkMobGrief(Level world, BlockPos pos, CallbackInfo ci) {
         if (HandlerUtil.isServerSide(world)) {
-            FlagCheckEvent checkEvent = new FlagCheckEvent(pos, MOB_GRIEFING, world.dimension());
+            FlagCheckEvent checkEvent = new FlagCheckEvent(pos, FlagRegister.MOB_GRIEFING, world.dimension());
             if (Services.EVENT.post(checkEvent))
                 return;
             processCheck(checkEvent, deny -> ci.cancel());
@@ -232,7 +226,7 @@ public class FlagEvaluator {
 
     public static void checkMobGrief(Level world, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
         if (HandlerUtil.isServerSide(world)) {
-            FlagCheckEvent checkEvent = new FlagCheckEvent(pos, MOB_GRIEFING, world.dimension());
+            FlagCheckEvent checkEvent = new FlagCheckEvent(pos, FlagRegister.MOB_GRIEFING, world.dimension());
             if (Services.EVENT.post(checkEvent))
                 return;
             processCheck(checkEvent, deny -> cir.setReturnValue(false));

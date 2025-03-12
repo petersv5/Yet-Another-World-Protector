@@ -1,10 +1,9 @@
 package de.z0rdak.yawp;
 
+import de.z0rdak.yawp.api.FlagRegister;
 import de.z0rdak.yawp.api.events.flag.NeoForgeFlagEvent;
 import de.z0rdak.yawp.commands.CommandRegistry;
-import de.z0rdak.yawp.config.ConfigRegistry;
 import de.z0rdak.yawp.constants.Constants;
-import de.z0rdak.yawp.core.flag.RegionFlag;
 import de.z0rdak.yawp.data.region.RegionDataManager;
 import de.z0rdak.yawp.platform.NeoForgeConfigHelper;
 import de.z0rdak.yawp.platform.Services;
@@ -15,8 +14,6 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.IExtensionPoint;
-import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -54,7 +51,7 @@ public class YetAnotherWorldProtector implements YAWPModInitializer {
     @SubscribeEvent
     public static void onAddFlag(NeoForgeFlagEvent.AddFlagEvent event) {
         if (event.getFlag().getName().contains("spawning") && Services.FLAG_CONFIG.removeEntitiesEnabled()) {
-            removeInvolvedEntities(event.getSrc(), event.getRegion(), RegionFlag.fromId(event.getFlag().getName()));
+            removeInvolvedEntities(event.getSrc(), event.getRegion(), FlagRegister.byId(event.getFlag().getName()));
         }
     }
     

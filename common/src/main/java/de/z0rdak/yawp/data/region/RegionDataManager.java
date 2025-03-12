@@ -1,12 +1,11 @@
 package de.z0rdak.yawp.data.region;
 
-import com.mojang.datafixers.types.Type;
+import de.z0rdak.yawp.api.FlagRegister;
 import de.z0rdak.yawp.api.commands.CommandConstants;
 import de.z0rdak.yawp.commands.arguments.region.RegionArgumentType;
 import de.z0rdak.yawp.constants.Constants;
 import de.z0rdak.yawp.core.flag.BooleanFlag;
 import de.z0rdak.yawp.core.flag.IFlag;
-import de.z0rdak.yawp.core.flag.RegionFlag;
 import de.z0rdak.yawp.core.region.GlobalRegion;
 import de.z0rdak.yawp.core.region.IMarkableRegion;
 import de.z0rdak.yawp.core.region.IProtectedRegion;
@@ -27,7 +26,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 import org.apache.commons.lang3.NotImplementedException;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -227,9 +225,9 @@ public class RegionDataManager extends SavedData {
 
     public static void addFlags(Set<String> flags, IProtectedRegion region) {
         flags.stream()
-                .map(RegionFlag::fromId)
+                .map(FlagRegister::byId)
                 .forEach(flag -> {
-                    switch (flag.type) {
+                    switch (flag.flagInfo().type()) {
                         case BOOLEAN_FLAG:
                             region.addFlag(new BooleanFlag(flag));
                             break;

@@ -1,5 +1,7 @@
 package de.z0rdak.yawp.core.flag;
 
+import de.z0rdak.yawp.api.Flag;
+import de.z0rdak.yawp.api.FlagRegister;
 import de.z0rdak.yawp.api.events.region.FlagCheckResult;
 import de.z0rdak.yawp.core.INbtSerializable;
 import de.z0rdak.yawp.core.region.IProtectedRegion;
@@ -13,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static de.z0rdak.yawp.constants.serialization.RegionNbtKeys.*;
-import static de.z0rdak.yawp.core.flag.FlagCategory.PLAYER;
+import static de.z0rdak.yawp.core.flag.FlagTag.PLAYER;
 import static de.z0rdak.yawp.util.ChatComponentBuilder.shortBlockPos;
 import static de.z0rdak.yawp.util.ChatComponentBuilder.tinyBlockPos;
 
@@ -69,13 +71,13 @@ public class FlagMessage implements INbtSerializable<CompoundTag> {
      * @param player the player to get the substitutes for
      * @return a map with default substitutes for the given flag and region
      */
-    public static Map<String, String> defaultSubstitutes(RegionFlag flag, IProtectedRegion region, BlockPos pos, @Nullable Player player) {
+    public static Map<String, String> defaultSubstitutes(Flag flag, IProtectedRegion region, BlockPos pos, @Nullable Player player) {
         Map<String, String> substituteMap = new HashMap<>();
-        substituteMap.put(FLAG_TEMPLATE, flag.name);
+        substituteMap.put(FLAG_TEMPLATE, flag.name());
         substituteMap.put(POS_TEMPLATE, shortBlockPos(pos));
         substituteMap.put(REGION_TEMPLATE, region.getName());
         substituteMap.put(DIM_TEMPLATE, region.getDim().location().toString());
-        if (player != null && flag.categories.contains(PLAYER)) {
+        if (player != null && FlagRegister.hasPlayerTag(flag)) {
             substituteMap.put(PLAYER_TEMPLATE, player.getScoreboardName());
         }
         return substituteMap;
@@ -91,11 +93,11 @@ public class FlagMessage implements INbtSerializable<CompoundTag> {
      */
     public static Map<String, String> defaultSubstitutesFor(FlagCheckResult result) {
         Map<String, String> substituteMap = new HashMap<>();
-        substituteMap.put(FLAG_TEMPLATE, result.getFlagCheck().getRegionFlag().name);
+        substituteMap.put(FLAG_TEMPLATE, result.getFlagCheck().getFlag().name());
         substituteMap.put(POS_TEMPLATE, tinyBlockPos(result.getFlagCheck().getTarget()));
         substituteMap.put(REGION_TEMPLATE, result.getResponsible().getName());
         substituteMap.put(DIM_TEMPLATE, result.getResponsible().getDim().location().toString());
-        if (result.getFlagCheck().getPlayer() != null && RegionFlag.hasPlayerCategory(result.getFlagCheck().getRegionFlag())) {
+        if (result.getFlagCheck().getPlayer() != null && FlagRegister.hasPlayerTag(result.getFlagCheck().getFlag())) {
             substituteMap.put(PLAYER_TEMPLATE, result.getFlagCheck().getPlayer().getScoreboardName());
         }
         return substituteMap;

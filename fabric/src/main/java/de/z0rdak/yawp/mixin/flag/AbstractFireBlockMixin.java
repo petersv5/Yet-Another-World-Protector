@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static de.z0rdak.yawp.core.flag.RegionFlag.SPAWN_PORTAL;
+import static de.z0rdak.yawp.api.FlagRegister.SPAWN_PORTAL;
 import static de.z0rdak.yawp.handler.HandlerUtil.*;
 
 @Mixin(BaseFireBlock.class)

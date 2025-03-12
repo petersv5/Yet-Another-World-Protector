@@ -1,6 +1,6 @@
 package de.z0rdak.yawp.api.events.region;
 
-import de.z0rdak.yawp.core.flag.RegionFlag;
+import de.z0rdak.yawp.api.Flag;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.player.Player;
@@ -32,14 +32,14 @@ public final class FlagCheckEvent {
     /**
      * The flag that is checked.
      */
-    private final RegionFlag regionFlag;
+    private final Flag regionFlag;
 
     /**
      * Internal Identifier to relate a flag check to its result.
      */
     private final String id;
 
-    public FlagCheckEvent(BlockPos target, RegionFlag regionFlag, ResourceKey<Level> dimension, @Nullable Player player) {
+    public FlagCheckEvent(BlockPos target, Flag regionFlag, ResourceKey<Level> dimension, @Nullable Player player) {
         this.player = player;
         this.target = target;
         this.dimension = dimension;
@@ -47,7 +47,7 @@ public final class FlagCheckEvent {
         this.id = UUID.randomUUID().toString();
     }
 
-    public FlagCheckEvent(BlockPos target, RegionFlag regionFlag, ResourceKey<Level> dimension, @Nullable Player player, String id) {
+    public FlagCheckEvent(BlockPos target, Flag regionFlag, ResourceKey<Level> dimension, @Nullable Player player, String id) {
         this.player = player;
         this.target = target;
         this.dimension = dimension;
@@ -55,7 +55,7 @@ public final class FlagCheckEvent {
         this.id = id;
     }
 
-    public FlagCheckEvent(BlockPos target, RegionFlag regionFlag, ResourceKey<Level> dimension) {
+    public FlagCheckEvent(BlockPos target, Flag regionFlag, ResourceKey<Level> dimension) {
         this(target, regionFlag, dimension, null);
     }
 
@@ -67,7 +67,7 @@ public final class FlagCheckEvent {
         return this.target;
     }
 
-    public RegionFlag getRegionFlag() {
+    public Flag getFlag() {
         return regionFlag;
     }
 

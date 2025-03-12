@@ -1,18 +1,15 @@
 package de.z0rdak.yawp;
 
+import de.z0rdak.yawp.api.FlagRegister;
 import de.z0rdak.yawp.api.events.flag.ForgeFlagEvent;
 import de.z0rdak.yawp.commands.CommandRegistry;
-import de.z0rdak.yawp.config.ConfigRegistry;
 import de.z0rdak.yawp.constants.Constants;
-import de.z0rdak.yawp.core.flag.RegionFlag;
 import de.z0rdak.yawp.data.region.RegionDataManager;
-import de.z0rdak.yawp.platform.ForgeConfigHelper;
 import de.z0rdak.yawp.platform.Services;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.common.ForgeConfig;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
@@ -52,7 +49,7 @@ public class YetAnotherWorldProtector implements YAWPModInitializer {
     @SubscribeEvent
     public static void onAddFlag(ForgeFlagEvent.AddFlagEvent event) {
         if (event.getFlag().getName().contains("spawning") && Services.FLAG_CONFIG.removeEntitiesEnabled()) {
-            removeInvolvedEntities(event.getSrc(), event.getRegion(), RegionFlag.fromId(event.getFlag().getName()));
+            removeInvolvedEntities(event.getSrc(), event.getRegion(), FlagRegister.byId(event.getFlag().getName()));
         }
     }
     

@@ -65,7 +65,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import static de.z0rdak.yawp.core.flag.RegionFlag.*;
+import static de.z0rdak.yawp.api.FlagRegister.*;
 import static de.z0rdak.yawp.handler.HandlerUtil.*;
 import static de.z0rdak.yawp.api.MessageSender.sendFlagMsg;
 import static net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus.FORGE;

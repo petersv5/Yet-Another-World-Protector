@@ -1,5 +1,6 @@
 package de.z0rdak.yawp.core.flag;
 
+import de.z0rdak.yawp.api.Flag;
 import de.z0rdak.yawp.api.permission.Permissions;
 import de.z0rdak.yawp.core.region.IProtectedRegion;
 import net.minecraft.world.entity.player.Player;
@@ -18,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public record FlagContext(
         IProtectedRegion region, 
-        RegionFlag regionFlag, 
+        Flag regionFlag,
         @Nullable IFlag flag, 
         @Nullable Player player) {
 
@@ -31,7 +32,7 @@ public record FlagContext(
      * @return The {@link FlagState} representing the resolved flag and its state.
      */
     public FlagState resultingState() {
-        var flagState = region.getFlags().flagState(regionFlag.name);
+        var flagState = region.getFlags().flagState(regionFlag.name());
         return Permissions.playerHasBypassPermission(region, player) 
                 ? FlagState.ALLOWED 
                 : flagState;
@@ -54,8 +55,8 @@ public record FlagContext(
      */
     public FlagContext inheritContext(FlagContext parent) {         
         var playerBypass = Permissions.playerHasBypassPermission(region, player);
-        var cFlagSet = region.getFlags().isAllowedOrDenied(regionFlag.name);
-        var pFlagSet = parent.region.getFlags().isAllowedOrDenied(regionFlag.name);
+        var cFlagSet = region.getFlags().isAllowedOrDenied(regionFlag.name());
+        var pFlagSet = parent.region.getFlags().isAllowedOrDenied(regionFlag.name());
         var parentOverrides = parent.flag != null && parent.flag.doesOverride();
         if (!parentOverrides) {
             if (pFlagSet && !cFlagSet && !playerBypass) return parent;
@@ -67,8 +68,8 @@ public record FlagContext(
 
     private FlagContext inheritContext2(FlagContext parent) {
         boolean playerBypass = Permissions.playerHasBypassPermission(region, player);
-        boolean childFlagSet = region.getFlags().isAllowedOrDenied(regionFlag.name);
-        boolean parentFlagSet = parent.region.getFlags().isAllowedOrDenied(regionFlag.name);
+        boolean childFlagSet = region.getFlags().isAllowedOrDenied(regionFlag.name());
+        boolean parentFlagSet = parent.region.getFlags().isAllowedOrDenied(regionFlag.name());
         boolean parentOverrides = parent.flag != null && parent.flag.doesOverride();
 
         if (parentOverrides || (parentFlagSet && !childFlagSet && !playerBypass)) {
@@ -81,7 +82,7 @@ public record FlagContext(
      * Creates a {@link FlagContext} for the parent region of the given region.
      * <p>
      * This method retrieves the parent region of the specified {@code region} and constructs  
-     * a {@link FlagContext} using the parent's flag value for the given {@link RegionFlag}.  
+     * a {@link FlagContext} using the parent's flag value for the given {@link Flag}.
      * </p>
      *
      * @param region     the region whose parent context is to be determined, must not be {@code null}
@@ -89,9 +90,9 @@ public record FlagContext(
      * @param player     the player associated with this flag context, may be {@code null}
      * @return a {@link FlagContext} representing the flag state in the parent region
      */
-    public static FlagContext parentOf(IProtectedRegion region, RegionFlag regionFlag, @Nullable Player player) {
+    public static FlagContext parentOf(IProtectedRegion region, Flag regionFlag, @Nullable Player player) {
         IProtectedRegion parent = region.getParent();
-        IFlag flag = parent.getFlag(regionFlag.name);
+        IFlag flag = parent.getFlag(regionFlag.name());
         return new FlagContext(parent, regionFlag, flag, player);
     }
 }

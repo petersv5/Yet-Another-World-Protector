@@ -1,9 +1,10 @@
 package de.z0rdak.yawp.handler;
 
+import de.z0rdak.yawp.api.Flag;
+import de.z0rdak.yawp.api.FlagRegister;
 import de.z0rdak.yawp.api.events.region.FlagCheckEvent;
 import de.z0rdak.yawp.core.area.CuboidArea;
 import de.z0rdak.yawp.core.flag.FlagState;
-import de.z0rdak.yawp.core.flag.RegionFlag;
 import de.z0rdak.yawp.core.region.IMarkableRegion;
 import de.z0rdak.yawp.core.region.IProtectedRegion;
 import net.minecraft.commands.CommandSourceStack;
@@ -31,7 +32,7 @@ import static de.z0rdak.yawp.api.FlagEvaluator.processCheck;
 
 public class YawpEventHandler {
 
-    public static void removeInvolvedEntities(CommandSourceStack src, IProtectedRegion region, RegionFlag flag) {
+    public static void removeInvolvedEntities(CommandSourceStack src, IProtectedRegion region, Flag flag) {
         ResourceKey<Level> dimKey = ResourceKey.create(Registries.DIMENSION, region.getDim().location());
         MinecraftServer server = src.getServer();
         Predicate<? super Entity> entityFilter = getEntityFilterForFlag(flag);
@@ -62,23 +63,23 @@ public class YawpEventHandler {
         }
     }
 
-    private static Predicate<? super Entity> getEntityFilterForFlag(RegionFlag flag) {
-        switch (flag) {
-            case SPAWNING_ALL:
+    private static Predicate<? super Entity> getEntityFilterForFlag(Flag flag) {
+        switch (flag.name()) {
+            case "yawp:spawning_all":
                 return e -> e instanceof Mob;
-            case SPAWNING_MONSTER:
+            case "yawp:spawning_monster":
                 return HandlerUtil::isMonster;
-            case SPAWNING_ANIMAL:
+            case "yawp:spawning_animal":
                 return HandlerUtil::isAnimal;
-            case SPAWNING_GOLEM:
+            case "yawp:spawning_golem":
                 return e -> e instanceof SnowGolem || e instanceof IronGolem;
-            case SPAWNING_TRADER:
+            case "yawp:spawning_trader":
                 return e -> e instanceof WanderingTrader;
-            case SPAWNING_SLIME:
+            case "yawp:spawning_slime":
                 return e -> e instanceof Slime;
-            case SPAWNING_VILLAGER:
+            case "yawp:spawning_villager":
                 return HandlerUtil::isVillager;
-            case SPAWNING_XP:
+            case "yawp:spawning_xp":
                 return e -> e instanceof ExperienceOrb;
             default:
                 return e -> false;
@@ -97,7 +98,7 @@ public class YawpEventHandler {
                 .collect(Collectors.toList());
     }
 
-    private static List<Entity> getEntitiesToRemove(ServerLevel level, Predicate<? super Entity> entityFilter, RegionFlag flag) {
+    private static List<Entity> getEntitiesToRemove(ServerLevel level, Predicate<? super Entity> entityFilter, Flag flag) {
         List<? extends Entity> entities = level.getEntities(EntityTypeTest.forClass(Entity.class), entityFilter);
         return entities.stream()
                 .filter(e -> !isProtectedByRegion(level, flag, e)) // That's O(enemyCount * regionCount) complexity, not considering the recursion for the flag check
@@ -116,7 +117,7 @@ public class YawpEventHandler {
         return false;
     }
 
-    private static boolean isProtectedByRegion(ServerLevel level, RegionFlag flag, Entity e) {
+    private static boolean isProtectedByRegion(ServerLevel level, Flag flag, Entity e) {
         FlagCheckEvent checkEvent = new FlagCheckEvent(e.blockPosition(), flag, level.dimension());
         FlagState flagState = processCheck(checkEvent);
         return flagState == FlagState.ALLOWED;

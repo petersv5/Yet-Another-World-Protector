@@ -3,7 +3,7 @@ package de.z0rdak.yawp.core.region;
 import de.z0rdak.yawp.api.permission.Permissions;
 import de.z0rdak.yawp.core.flag.RegionFlags;
 import de.z0rdak.yawp.core.flag.IFlag;
-import de.z0rdak.yawp.core.flag.RegionFlag;
+import de.z0rdak.yawp.api.Flag;
 import de.z0rdak.yawp.core.group.PlayerContainer;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -109,8 +109,13 @@ public abstract class AbstractRegion implements IProtectedRegion {
         this.flags.remove(flag);
     }
 
-    public boolean containsFlag(RegionFlag flag) {
-        return this.flags.contains(flag.name);
+    public boolean containsFlag(Flag flag) {
+        return this.flags.contains(flag.name());
+    }
+
+    @Override
+    public boolean containsFlag(ResourceLocation flag) {
+        return this.flags.contains(flag.toString());
     }
 
     @Override

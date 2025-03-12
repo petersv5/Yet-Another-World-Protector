@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static de.z0rdak.yawp.core.flag.RegionFlag.ENDERMAN_TELEPORT_FROM_REGION;
+import static de.z0rdak.yawp.api.FlagRegister.ENDERMAN_TELEPORT_FROM_REGION;
 import static de.z0rdak.yawp.handler.HandlerUtil.*;
 import static de.z0rdak.yawp.api.MessageSender.sendFlagMsg;
 

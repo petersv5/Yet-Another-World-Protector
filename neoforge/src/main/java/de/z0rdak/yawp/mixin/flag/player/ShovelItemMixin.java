@@ -14,8 +14,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static de.z0rdak.yawp.core.flag.RegionFlag.SHOVEL_PATH;
-import static de.z0rdak.yawp.core.flag.RegionFlag.TOOL_SECONDARY_USE;
+import static de.z0rdak.yawp.api.FlagRegister.SHOVEL_PATH;
+import static de.z0rdak.yawp.api.FlagRegister.TOOL_SECONDARY_USE;
 import static de.z0rdak.yawp.handler.HandlerUtil.*;
 import static de.z0rdak.yawp.api.MessageSender.sendFlagMsg;
 

@@ -42,7 +42,7 @@ public class NeoForgeFlagCheckResult extends Event {
 
     public static NeoForgeFlagCheckResult asEvent(FlagCheckResult result) {
         FlagCheckEvent check = result.getFlagCheck();
-        NeoForgeFlagCheckEvent checkEvent = new NeoForgeFlagCheckEvent(check.getTarget(), check.getRegionFlag(), check.getDimension(), check.getPlayer(), check.getId());
+        NeoForgeFlagCheckEvent checkEvent = new NeoForgeFlagCheckEvent(check.getTarget(), check.getFlag(), check.getDimension(), check.getPlayer(), check.getId());
         return new NeoForgeFlagCheckResult(checkEvent, result.getFlagState(), result.getResponsible(), result.getFlag());
     }
 

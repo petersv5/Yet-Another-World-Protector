@@ -1,8 +1,9 @@
 package de.z0rdak.yawp.mixin.flag;
 
 import de.z0rdak.yawp.api.FlagEvaluator;
+import de.z0rdak.yawp.api.FlagRegister;
 import de.z0rdak.yawp.api.events.region.FlagCheckEvent;
-import de.z0rdak.yawp.core.flag.RegionFlag;
+import de.z0rdak.yawp.api.Flag;
 import de.z0rdak.yawp.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -24,7 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import static de.z0rdak.yawp.core.flag.RegionFlag.*;
+import static de.z0rdak.yawp.api.FlagRegister.*;
 import static de.z0rdak.yawp.handler.HandlerUtil.*;
 import static de.z0rdak.yawp.api.MessageSender.sendFlagMsg;
 
@@ -175,7 +176,7 @@ public abstract class LivingEntityMixin {
         }
         
         if (self instanceof Player) {
-            FlagCheckEvent checkEvent = new FlagCheckEvent(self.blockPosition(), RegionFlag.KEEP_XP, getDimKey(self));
+            FlagCheckEvent checkEvent = new FlagCheckEvent(self.blockPosition(), FlagRegister.KEEP_XP, getDimKey(self));
             if (Services.EVENT.post(checkEvent))
                 return;
             FlagEvaluator.processCheck(checkEvent, deny -> {
