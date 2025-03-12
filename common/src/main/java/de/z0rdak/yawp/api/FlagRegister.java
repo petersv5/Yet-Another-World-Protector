@@ -20,32 +20,108 @@ public class FlagRegister {
     }
 
     /**
-     * Check whether the supplied flags/flagIdentifiers are matching
-     * @param flagId
-     * @param flag
-     * @return
+     * Checks if the given flag ID matches the specified Flag.
+     *
+     * @param flagId The string representation of the flag ID.
+     * @param flag   The flag to compare against.
+     * @return True if the flag ID matches the flag's ResourceLocation, false otherwise.
      */
     public static boolean isSame(String flagId, Flag flag) {
         ResourceLocation left = ResourceLocation.parse(flagId);
         return left.equals(flag.rl());
     }
 
+    /**
+     * Checks if two Flag instances represent the same flag.
+     *
+     * @param left  The first flag.
+     * @param right The second flag.
+     * @return True if both flags have the same ResourceLocation, false otherwise.
+     */
     public static boolean isSame(Flag left, Flag right) {
         return isSame(left.rl(), right);
     }
 
+    /**
+     * Checks if the given ResourceLocation matches the specified Flag.
+     *
+     * @param flagId The ResourceLocation of the flag.
+     * @param flag   The flag to compare against.
+     * @return True if the ResourceLocation matches the flag's ResourceLocation, false otherwise.
+     */
     public static boolean isSame(ResourceLocation flagId, Flag flag) {
         return flagId.equals(flag.rl());
     }
 
-    public static void registerFlag(Flag flag) {
+    /**
+     * Registers a flag in the internal flag registry if it is not already registered.
+     * The flag's resource location should follow the format {@code modId:flagId} to ensure uniqueness.
+     *
+     * @param flag The flag to register.
+     * @return {@code true} if the flag was successfully registered, {@code false} if it was already registered.
+     */
+    public static boolean registerFlag(Flag flag) {
+        if (isFlagRegistered(flag.rl())) {
+            return false;
+        }
         flagRegister.put(flag.rl(), flag);
+        return true;
     }
 
+    /**
+     * Registers a flag in the internal flag registry using a {@link ResourceLocation} and {@link FlagMetaInfo}.
+     * If a flag with the same resource location already exists, registration is skipped.
+     *
+     * @param flagRl The unique resource location of the flag.
+     * @param flagMetaInfo The metadata associated with the flag.
+     * @return {@code true} if the flag was successfully registered, {@code false} if it was already registered.
+     */
+    public static boolean registerFlag(ResourceLocation flagRl, FlagMetaInfo flagMetaInfo) {
+        return registerFlag(new Flag(flagRl, flagMetaInfo));
+    }
+
+    /**
+     * Registers a flag in the internal flag registry using the modId of the registering mod and a flagId.
+     * If a flag with the same resource location already exists, registration is skipped.
+     *
+     * @param modId The namespace of the mod defining the flag.
+     * @param flagId The unique identifier of the flag within the mod's namespace.
+     * @param flagMetaInfo The metadata associated with the flag.
+     * @return {@code true} if the flag was successfully registered, {@code false} if it was already registered.
+     */
+    public static boolean registerFlag(String modId, String flagId, FlagMetaInfo flagMetaInfo) {
+        var rl = ResourceLocation.fromNamespaceAndPath(modId, flagId);
+        return registerFlag(new Flag(rl, flagMetaInfo));
+    }
+
+    /**
+     * Retrieves all registered flags that match a given frequency.
+     *
+     * @param frequency The frequency to filter flags by.
+     * @return A set of flags that have the specified frequency.
+     */
+    public static Set<Flag> getFlagsByFrequency(FlagFrequency frequency) {
+        return flagRegister.values().stream()
+                .filter(flag -> flag.flagInfo().frequency() == frequency)
+                .collect(Collectors.toSet());
+    }
+
+    /**
+     * Checks if a flag is registered based on its ResourceLocation.
+     *
+     * @param rl The ResourceLocation of the flag.
+     * @return True if the flag is registered, false otherwise.
+     */
     public static boolean isFlagRegistered(ResourceLocation rl) {
         return flagRegister.containsKey(rl);
     }
 
+    /**
+     * Checks if a flag is registered based on its string identifier.
+     *
+     * @param flagIdentifier The string representation of the flag.
+     * @return True if the flag is registered, false otherwise.
+     */
     public static boolean isRegistered(String flagIdentifier) {
         try {
             ResourceLocation rl = ResourceLocation.parse(flagIdentifier);
@@ -55,6 +131,13 @@ public class FlagRegister {
         }
     }
 
+    /**
+     * Retrieves a Flag by its string identifier.
+     *
+     * @param flagIdentifier The string representation of the flag.
+     * @return The corresponding Flag.
+     * @throws IllegalArgumentException If the flag is not registered.
+     */
     public static Flag byId(String flagIdentifier) throws IllegalArgumentException {
         if (isRegistered(flagIdentifier)) {
             return flagRegister.get(ResourceLocation.parse(flagIdentifier));
@@ -62,47 +145,95 @@ public class FlagRegister {
         throw new IllegalArgumentException("Invalid region flag identifier supplied");
     }
 
+    /**
+     * Retrieves an Optional containing the Flag if it exists.
+     *
+     * @param rl The ResourceLocation of the flag.
+     * @return An Optional containing the flag if registered, otherwise empty.
+     */
     public static Optional<Flag> getFlagOptional(ResourceLocation rl) {
         return isFlagRegistered(rl) ? Optional.of(flagRegister.get(rl)) : Optional.empty();
     }
 
+    /**
+     * Retrieves a Flag by its ResourceLocation, or null if not found.
+     *
+     * @param rl The ResourceLocation of the flag.
+     * @return The corresponding Flag if registered, otherwise null.
+     */
     @Nullable
     public static Flag getFlag(ResourceLocation rl) {
         return isFlagRegistered(rl) ? flagRegister.get(rl) : null;
     }
 
+    /**
+     * Gets a list of all registered flag names as strings.
+     *
+     * @return A list of flag names.
+     */
     public static List<String> getFlagNames() {
         return flagRegister.keySet().stream()
                 .map(ResourceLocation::toString)
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Retrieves a set of all registered Flags.
+     *
+     * @return A set containing all registered Flags.
+     */
     public static Set<Flag> getFlags() {
         return new HashSet<>(flagRegister.values());
     }
 
+    /**
+     * Retrieves all flags that match a given category tag.
+     *
+     * @param tag The category tag to filter flags by.
+     * @return A set of flags that match the given tag.
+     */
     public static Set<Flag> getFlagsMatchingCategory(FlagTag tag) {
         return getFlags().stream()
                 .filter(flag -> flag.flagInfo().tags().contains(tag))
                 .collect(Collectors.toSet());
     }
 
+    /**
+     * Checks if a given flag has the PLAYER tag based on its identifier.
+     *
+     * @param flag The flag to check.
+     * @return True if the flag has the PLAYER tag, false otherwise.
+     */
     public static boolean hasPlayerTag(IFlag flag) {
         Set<Flag> flagsMatchingCategory = getFlagsMatchingCategory(FlagTag.PLAYER);
         Flag regionFlag = byId(flag.getName());
         return flagsMatchingCategory.contains(regionFlag);
     }
 
+    /**
+     * Checks if a given flag has the PLAYER tag.
+     *
+     * @param flag The flag to check.
+     * @return True if the flag has the PLAYER tag, false otherwise.
+     */
     public static boolean hasPlayerTag(Flag flag) {
         return flag.flagInfo().tags().contains(FlagTag.PLAYER);
     }
 
+    /**
+     * Determines if a flag belongs to a given set of category tags.
+     *
+     * @param flag The flag to check.
+     * @param tags The set of category tags.
+     * @return True if the flag has at least one of the given tags, false otherwise.
+     */
     public static boolean matchesCategory(Flag flag, Set<String> tags) {
         Set<String> flagTags = flag.flagInfo().tags().stream()
                 .map(c -> c.name)
                 .collect(Collectors.toSet());
         return tags.stream().anyMatch(flagTags::contains);
     }
+
 
     /* Flags defined by YAWP */
     public static final Flag ANIMAL_BREEDING = new Flag(flagId("animal_breeding"),
