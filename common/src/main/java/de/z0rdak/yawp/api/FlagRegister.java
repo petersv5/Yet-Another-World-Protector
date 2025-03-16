@@ -13,6 +13,7 @@ public class FlagRegister {
 
     private FlagRegister() {}
 
+
     private static final Map<ResourceLocation, Flag> flagRegister = new HashMap<>();
 
     private static ResourceLocation flagId(final String flagName) {
@@ -28,7 +29,7 @@ public class FlagRegister {
      */
     public static boolean isSame(String flagId, Flag flag) {
         ResourceLocation left = ResourceLocation.parse(flagId);
-        return left.equals(flag.rl());
+        return left.equals(flag.id());
     }
 
     /**
@@ -39,7 +40,7 @@ public class FlagRegister {
      * @return True if both flags have the same ResourceLocation, false otherwise.
      */
     public static boolean isSame(Flag left, Flag right) {
-        return isSame(left.rl(), right);
+        return isSame(left.id(), right);
     }
 
     /**
@@ -50,7 +51,7 @@ public class FlagRegister {
      * @return True if the ResourceLocation matches the flag's ResourceLocation, false otherwise.
      */
     public static boolean isSame(ResourceLocation flagId, Flag flag) {
-        return flagId.equals(flag.rl());
+        return flagId.equals(flag.id());
     }
 
     /**
@@ -61,10 +62,10 @@ public class FlagRegister {
      * @return {@code true} if the flag was successfully registered, {@code false} if it was already registered.
      */
     public static boolean registerFlag(Flag flag) {
-        if (isFlagRegistered(flag.rl())) {
+        if (isFlagRegistered(flag.id())) {
             return false;
         }
-        flagRegister.put(flag.rl(), flag);
+        flagRegister.put(flag.id(), flag);
         return true;
     }
 
