@@ -5,6 +5,7 @@ import de.z0rdak.yawp.platform.Services;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.sniffer.Sniffer;
+import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,7 +22,15 @@ public abstract class SnifferMixin {
     public void spawnChildFromBreeding(ServerLevel world, Animal parentB, CallbackInfo ci) {
         if (isServerSide(world)) {
             Sniffer parentA = (Sniffer) (Object) this;
-            FlagCheckEvent checkEvent = new FlagCheckEvent(parentA.blockPosition(), ANIMAL_BREEDING, world.dimension(), null);
+            Player causedByPlayer = null;
+            if (parentA instanceof Animal animal) {
+                causedByPlayer = animal.getLoveCause();
+            }
+
+            if (causedByPlayer == null && parentB instanceof Animal animal) {
+                causedByPlayer = animal.getLoveCause();
+            }
+            FlagCheckEvent checkEvent = new FlagCheckEvent(parentA.blockPosition(), ANIMAL_BREEDING, world.dimension(), causedByPlayer);
             if (Services.EVENT.post(checkEvent)) {
                 return;
             }
@@ -34,4 +43,5 @@ public abstract class SnifferMixin {
             });
         }
     }
+
 }
